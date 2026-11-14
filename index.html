@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia Mr. Dan | Desde 2018</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fbf7e6',
+                            100: '#f3e5ab',
+                            200: '#ebd370',
+                            300: '#e1bd38',
+                            400: '#d4af37',
+                            500: '#c59b27',
+                            600: '#a77c1d',
+                            700: '#855f18',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased pb-32">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/80">
+        <div class="max-w-2xl mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-gold-400 bg-zinc-900 flex items-center justify-center">
+                    <img src="logo.png" alt="Logo Barbearia Mr. Dan" class="w-full h-full object-cover" onerror="this.src='Logo.png'">
+                </div>
+                <div>
+                    <span class="block font-bold text-lg tracking-wider text-white">MR. DAN</span>
+                    <span class="block text-xs text-gold-400 tracking-widest uppercase">Desde 2018</span>
+                </div>
+            </a>
+            <a href="#servicos" class="bg-gradient-to-r from-gold-500 to-gold-300 text-zinc-950 font-bold px-4 py-2 rounded-xl shadow-md text-sm">
+                Agendar
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="py-10 px-4 text-center bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-900">
+        <div class="max-w-xl mx-auto space-y-4">
+            <div class="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-gold-400 shadow-2xl bg-zinc-900 flex items-center justify-center">
+                <img src="logo.png" alt="Barbearia Mr. Dan" class="w-full h-full object-cover" onerror="this.src='Logo.png'">
+            </div>
+            <h1 class="text-3xl md:text-4xl font-black uppercase font-serif text-white">
+                Barbearia <span class="text-gold-400">Mr. Dan</span>
+            </h1>
+            <p class="text-zinc-300 text-xs md:text-sm">
+                Selecione os serviços, escolha um horário disponível e agende direto pelo WhatsApp!
+            </p>
+        </div>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-2xl mx-auto px-4
