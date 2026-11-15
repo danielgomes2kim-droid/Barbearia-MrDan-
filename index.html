@@ -15,370 +15,274 @@
                         gold: {
                             50: '#fbf7e6',
                             100: '#f3e5ab',
-                            200: '#ebd370',
-                            300: '#e1bd38',
-                            400: '#d4af37',
-                            500: '#c59b27',
-                            600: '#a77c1d',
-                            700: '#855f18',
+                            200: '#ead380',
+                            300: '#e1c155',
+                            400: '#d9af2a',
+                            500: '#b8921e',
+                            600: '#947417',
+                            700: '#705711',
+                            800: '#4d390b',
+                            900: '#291f06',
                         }
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .service-card.selected {
-            border-color: #d4af37;
-            background-color: rgba(39, 39, 42, 0.85);
+        .gold-gradient {
+            background: linear-gradient(135deg, #d9af2a 0%, #b8921e 50%, #705711 100%);
         }
-        .service-card.selected .checkbox-box {
-            background-color: #d4af37;
-            border-color: #d4af37;
+        .gold-border {
+            border-color: #d9af2a;
         }
-        .service-card.selected .checkbox-box i {
-            opacity: 1;
-        }
-        .time-btn.selected {
-            background-color: #d4af37;
-            color: #09090b;
-            border-color: #d4af37;
+        .gold-text {
+            color: #d9af2a;
         }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased pb-32">
+<body class="bg-black text-zinc-100 min-h-screen font-sans antialiased selection:bg-gold-500 selection:text-black pb-28">
 
-    <!-- Caixa de Notificação -->
-    <div id="toast-notification" class="fixed top-24 left-1/2 -translate-x-1/2 z-[100] hidden max-w-sm w-[90%]">
-        <div class="bg-zinc-900 border-2 border-gold-400 text-white px-4 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-gold-400/20 text-gold-400 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-circle-exclamation"></i>
-            </div>
-            <p id="toast-message" class="text-xs sm:text-sm font-medium text-zinc-100 flex-1"></p>
-            <button onclick="hideToast()" class="text-zinc-400 hover:text-white p-1">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800/80">
-        <div class="max-w-2xl mx-auto px-4 h-20 flex items-center justify-between">
-            <!-- Logo e Nome -->
-            <a href="#" class="flex items-center gap-3 group">
-                <div class="w-11 h-11 rounded-full overflow-hidden border-2 border-gold-500 shadow-lg flex-shrink-0 bg-black flex items-center justify-center">
-                    <img src="profile_052046.png" alt="Logo" class="w-full h-full object-cover">
+    <!-- Header / Logo Section -->
+    <header class="bg-zinc-950 border-b border-zinc-800 sticky top-0 z-40 shadow-lg">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-full gold-gradient p-0.5 shadow-md flex items-center justify-center overflow-hidden">
+                    <img src="profile_052046.png" alt="Barbearia Mr. Dan Logo" class="w-full h-full object-cover rounded-full">
                 </div>
                 <div>
-                    <span class="font-display font-bold text-lg tracking-wider text-white block leading-none">MR. DAN</span>
-                    <span class="text-[11px] text-gold-400 tracking-widest uppercase font-semibold">Desde 2018</span>
+                    <h1 class="font-bold text-lg text-white tracking-wide">MR. DAN</h1>
+                    <p class="text-xs gold-text font-medium tracking-widest uppercase">Desde 2018</p>
                 </div>
-            </a>
-            <a href="#servicos" class="bg-gradient-to-r from-gold-500 to-gold-300 text-zinc-950 font-bold px-4 py-2 rounded-xl shadow-md text-sm">
-                Agendar
-            </a>
+            </div>
+            <span class="text-xs bg-zinc-900 border gold-border gold-text px-2.5 py-1 rounded-full font-semibold shadow-inner">
+                Atendimento com Hora Marcada
+            </span>
         </div>
     </header>
-    <!-- Cabeçalho Compacto / Boas-vindas -->
-    <section class="pt-28 pb-8 px-4 text-center bg-gradient-to-b from-dark-800 to-dark-900 border-b border-white/5">
-        <div class="max-w-xl mx-auto">
-            <!-- Logo em destaque -->
-            <div class="w-28 h-28 sm:w-32 sm:h-32 mx-auto mb-5 rounded-full overflow-hidden border-4 border-gold-500 shadow-2xl shadow-gold-500/20 bg-black flex items-center justify-center">
-                <img src="profile_052046.png" alt="Barbearia Mr. Dan" class="w-full h-full object-cover">
-            </div>
-            
-            <h1 class="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">
-                BARBEARIA <span class="text-gold-500">MR. DAN</span>
-            </h1>
-            <p class="text-zinc-300 text-xs md:text-sm">
-                Selecione os serviços, escolha um horário disponível e agende direto pelo WhatsApp!
-            </p>
+
+    <!-- Main Container -->
+    <main class="max-w-md mx-auto px-4 py-6 space-y-6">
+
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-br from-zinc-900 to-zinc-950 border gold-border rounded-2xl p-5 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-32 h-32 gold-gradient opacity-10 rounded-full blur-2xl"></div>
+            <h2 class="text-xl font-bold text-white mb-1">Agende seu horário</h2>
+            <p class="text-sm text-zinc-400">Escolha os serviços desejados, o melhor horário e garanta seu atendimento direto pelo WhatsApp.</p>
         </div>
-    </section>
 
-    <!-- Conteúdo Principal -->
-    <main class="max-w-2xl mx-auto px-4 py-6 space-y-8">
-        
-        <!-- 1. Seleção de Serviços -->
-        <section id="servicos" class="space-y-4">
-            <div class="border-l-4 border-gold-400 pl-3">
-                <h2 class="text-xl font-bold font-serif text-white">1. Escolha os Serviços</h2>
-                <p class="text-xs text-zinc-400">Toque para selecionar um ou mais serviços</p>
+        <!-- 1. Serviços -->
+        <section class="space-y-3">
+            <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
+                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">1</span>
+                <h3 class="font-bold text-base text-white">Escolha os Serviços</h3>
             </div>
+            <p class="text-xs text-zinc-400">Toque para selecionar um ou mais serviços</p>
 
-            <div class="space-y-3">
-                <div onclick="toggleService(this, 'Corte Simples', 25)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Corte Simples</h3>
-                            <p class="text-[11px] text-zinc-400">Corte tradicional</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 25,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Corte Disfarçado', 40)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Corte Disfarçado</h3>
-                            <p class="text-[11px] text-zinc-400">Degradê com acabamento na navalha</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 40,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Máquina e Tesoura', 45)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Máquina e Tesoura</h3>
-                            <p class="text-[11px] text-zinc-400">Laterais na máquina e topo na tesoura</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 45,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Corte na Tesoura', 60)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Corte na Tesoura</h3>
-                            <p class="text-[11px] text-zinc-400">100% tesoura</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 60,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Barba Modelada', 20)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Barba Modelada</h3>
-                            <p class="text-[11px] text-zinc-400">Alinhamento e acabamento</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 20,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Sobrancelha', 20)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Sobrancelha</h3>
-                            <p class="text-[11px] text-zinc-400">Design com navalha ou pinça</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 20,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Henna', 45)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Henna</h3>
-                            <p class="text-[11px] text-zinc-400">Pigmentação para sobrancelha</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 45,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Bigode', 10)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Bigode</h3>
-                            <p class="text-[11px] text-zinc-400">Acabamento e alinhamento</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 10,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Acabamento (pezinho)', 15)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Acabamento (pezinho)</h3>
-                            <p class="text-[11px] text-zinc-400">Contorno e nuca</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 15,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Pigmentação (pretinho)', 20)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Pigmentação (pretinho)</h3>
-                            <p class="text-[11px] text-zinc-400">Realce do corte e barba</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 20,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Limpeza de pele', 20)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Limpeza de pele</h3>
-                            <p class="text-[11px] text-zinc-400">Remoção de impurezas básicas</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 20,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Reflexo alinhado', 120)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Reflexo alinhado</h3>
-                            <p class="text-[11px] text-zinc-400">Luzes com acabamento</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 120,00</span>
-                </div>
-
-                <div onclick="toggleService(this, 'Platinado', 120)" class="service-card cursor-pointer bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between transition-all hover:border-gold-400/60">
-                    <div class="flex items-center gap-3">
-                        <div class="checkbox-box w-5 h-5 rounded-md border-2 border-zinc-600 flex items-center justify-center text-zinc-950 transition-colors">
-                            <i class="fa-solid fa-check text-[10px] opacity-0 text-zinc-950"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm">Platinado</h3>
-                            <p class="text-[11px] text-zinc-400">Descoloração global</p>
-                        </div>
-                    </div>
-                    <span class="font-bold text-gold-400 text-sm">R$ 120,00</span>
-                </div>
+            <div id="services-list" class="space-y-2.5">
+                <!-- Inserido dinamicamente via JS -->
             </div>
         </section>
 
-        <!-- 2. Escolha de Horário -->
-        <section class="space-y-4 pt-2">
-            <div class="border-l-4 border-gold-400 pl-3">
-                <h2 class="text-xl font-bold font-serif text-white">2. Escolha o Horário</h2>
-                <p class="text-xs text-zinc-400">Selecione o horário desejado (11h às 22h)</p>
+        <!-- 2. Horários -->
+        <section class="space-y-3 pt-2">
+            <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
+                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">2</span>
+                <h3 class="font-bold text-base text-white">Escolha o Horário</h3>
             </div>
+            <p class="text-xs text-zinc-400">Horários disponíveis para hoje:</p>
 
-            <div class="grid grid-cols-3 gap-2.5" id="horarios-container">
-                <button type="button" onclick="selectTime(this, '11:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">11:00</button>
-                <button type="button" onclick="selectTime(this, '12:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">12:00</button>
-                <button type="button" onclick="selectTime(this, '13:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">13:00</button>
-                <button type="button" onclick="selectTime(this, '14:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">14:00</button>
-                <button type="button" onclick="selectTime(this, '15:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">15:00</button>
-                <button type="button" onclick="selectTime(this, '16:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">16:00</button>
-                <button type="button" onclick="selectTime(this, '17:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">17:00</button>
-                <button type="button" onclick="selectTime(this, '18:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">18:00</button>
-                <button type="button" onclick="selectTime(this, '19:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">19:00</button>
-                <button type="button" onclick="selectTime(this, '20:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">20:00</button>
-                <button type="button" onclick="selectTime(this, '21:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">21:00</button>
-                <button type="button" onclick="selectTime(this, '22:00')" class="time-btn bg-zinc-900 border border-zinc-800 text-zinc-300 py-2.5 rounded-xl text-xs font-bold hover:border-gold-400 transition-all">22:00</button>
+            <div id="slots-grid" class="grid grid-cols-4 gap-2">
+                <!-- Inserido dinamicamente via JS -->
             </div>
         </section>
 
     </main>
 
-    <!-- Barra Fixa Inferior -->
-    <div class="fixed bottom-0 left-0 right-0 bg-zinc-900/95 backdrop-blur-md border-t border-zinc-800 p-4 z-50 shadow-2xl">
-        <div class="max-w-2xl mx-auto flex items-center justify-between gap-4">
+    <!-- Sticky Footer / Summary -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800 p-4 z-50 shadow-2xl">
+        <div class="max-w-md mx-auto flex items-center justify-between gap-3">
             <div>
-                <p class="text-[10px] text-zinc-400">Total Selecionado:</p>
-                <p id="total-price" class="text-base font-bold text-gold-400">R$ 0,00</p>
-                <p id="selected-time-display" class="text-[11px] text-zinc-300">Horário: <span class="text-amber-400 font-semibold">Nenhum</span></p>
+                <p class="text-xs text-zinc-400 uppercase tracking-wider font-medium">Total Selecionado</p>
+                <p id="total-price" class="text-xl font-extrabold gold-text">R$ 0,00</p>
+                <p id="selected-time-label" class="text-xs text-zinc-500 font-medium">Horário: Nenhum</p>
             </div>
-            <button onclick="enviarWhatsApp()" class="bg-gradient-to-r from-gold-500 to-gold-300 text-zinc-950 font-bold py-3 px-5 rounded-xl shadow-lg flex items-center justify-center gap-2 text-xs md:text-sm hover:opacity-90 transition-all">
-                <i class="fa-brands fa-whatsapp text-base"></i> Confirmar no WhatsApp
+            <button onclick="sendToWhatsApp()" id="book-btn" disabled class="flex-1 bg-zinc-800 text-zinc-500 font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 text-sm flex items-center justify-center space-x-2 cursor-not-allowed">
+                <span>Agendar no WhatsApp</span>
             </button>
         </div>
-    </div>
+    </footer>
 
-    <!-- Script -->
+    <!-- JavaScript Application Logic -->
     <script>
+        const services = [
+            { id: 'corte-simples', name: 'Corte Simples', desc: 'Corte tradicional tesoura ou máquina', price: 25.00 },
+            { id: 'corte-disf', name: 'Corte Disfarçado', desc: 'Degradê lateral e acabamento alinhado', price: 40.00 },
+            { id: 'maquina-tesoura', name: 'Máquina e Tesoura', desc: 'Acabamento superior e lateral completo', price: 45.00 },
+            { id: 'corte-tesoura', name: 'Corte na Tesoura', desc: 'Estilo clássico ou moderno na tesoura', price: 60.00 },
+            { id: 'barba-modelada', name: 'Barba Modelada', desc: 'Toalha quente, navalha e acabamento', price: 20.00 },
+            { id: 'sobrancelha', name: 'Sobrancelha', desc: 'Design e alinhamento com navalha ou pinça', price: 20.00 },
+            { id: 'henna', name: 'Henna', desc: 'Pigmentação para barba ou sobrancelha', price: 45.00 },
+            { id: 'bigode', name: 'Bigode', desc: 'Modelagem e acabamento exclusivo', price: 10.00 },
+            { id: 'acabamento', name: 'Acabamento / Pezinho', desc: 'Contornos e limpeza na nuca e costeletas', price: 15.00 },
+            { id: 'pigmentacao', name: 'Pigmentação / Pretinho', desc: 'Acabamento com tinta ou jato seco', price: 20.00 },
+            { id: 'limpeza-pele', name: 'Limpeza de Pele', desc: 'Argila verde, carvão ativado ou esfoliante rosa', price: 20.00 },
+            { id: 'reflexo', name: 'Reflexo Alinhado', desc: 'Luzes ou mechas alinhadas no topo', price: 120.00 },
+            { id: 'platinado', name: 'Platinado / Nevou', desc: 'Descoloração global e tonalizante', price: 120.00 },
+            { id: 'freestyle', name: 'Freestyle Lateral', desc: 'Riscos e desenhos personalizados na lateral', price: 25.00 },
+            { id: 'trancas', name: 'Tranças (Box Braids / Nagô)', desc: 'Estilos modernos e trançados', price: 120.00 }
+        ];
+
+        const timeSlots = [
+            "11:00", "12:00", "13:00", "14:00", 
+            "15:00", "16:00", "17:00", "18:00", 
+            "19:00", "20:00", "21:00", "22:00"
+        ];
+
         let selectedServices = [];
         let selectedTime = null;
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast-notification');
-            document.getElementById('toast-message').innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => hideToast(), 4000);
+        const STORAGE_KEY = 'barbearia_mr_dan_booked_slots_v1';
+
+        function getBookedSlots() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                return stored ? JSON.parse(stored) : [];
+            } catch(e) {
+                return [];
+            }
         }
 
-        function hideToast() {
-            document.getElementById('toast-notification').classList.add('hidden');
+        function setBookedSlot(time) {
+            const booked = getBookedSlots();
+            if (!booked.includes(time)) {
+                booked.push(time);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(booked));
+            }
         }
 
-        function toggleService(element, name, price) {
-            const index = selectedServices.findIndex(s => s.name === name);
+        function renderServices() {
+            const container = document.getElementById('services-list');
+            container.innerHTML = services.map(s => `
+                <div onclick="toggleService('${s.id}')" id="srv-${s.id}" class="bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 flex items-center justify-between cursor-pointer transition-all duration-150 hover:border-gold-500">
+                    <div class="flex items-center space-x-3">
+                        <div id="chk-${s.id}" class="w-5 h-5 rounded-md border border-zinc-700 flex items-center justify-center transition-colors">
+                            <svg class="w-3 h-3 text-black hidden" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-white">${s.name}</h4>
+                            <p class="text-xs text-zinc-400">${s.desc}</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-extrabold gold-text whitespace-nowrap ml-2">R$ ${s.price.toFixed(2).replace('.', ',')}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderSlots() {
+            const container = document.getElementById('slots-grid');
+            const bookedSlots = getBookedSlots();
+
+            container.innerHTML = timeSlots.map(time => {
+                const isBooked = bookedSlots.includes(time);
+                const isSelected = selectedTime === time;
+
+                if (isBooked) {
+                    return `
+                        <div class="bg-zinc-950 border border-zinc-900 text-zinc-600 py-2.5 rounded-xl text-xs font-semibold text-center cursor-not-allowed opacity-40 relative">
+                            ${time}
+                            <span class="absolute inset-x-0 bottom-0.5 text-[9px] uppercase tracking-tighter text-zinc-600">Ocupado</span>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <button onclick="selectTime('${time}')" id="slot-${time}" class="py-2.5 rounded-xl text-xs font-bold text-center transition-all duration-150 border ${isSelected ? 'gold-gradient text-black gold-border shadow-lg shadow-gold-500/20 font-extrabold scale-105' : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-gold-500'}">
+                        ${time}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function toggleService(id) {
+            const service = services.find(s => s.id === id);
+            const index = selectedServices.findIndex(s => s.id === id);
+            const card = document.getElementById(`srv-${id}`);
+            const chk = document.getElementById(`chk-${id}`);
+            const svg = chk.querySelector('svg');
+
             if (index > -1) {
                 selectedServices.splice(index, 1);
-                element.classList.remove('selected');
+                card.classList.remove('border-gold-500', 'bg-zinc-900/80');
+                chk.classList.remove('gold-gradient', 'gold-border');
+                chk.classList.add('border-zinc-700');
+                svg.classList.add('hidden');
             } else {
-                selectedServices.push({ name, price });
-                element.classList.add('selected');
+                selectedServices.push(service);
+                card.classList.add('border-gold-500', 'bg-zinc-900/80');
+                chk.classList.add('gold-gradient', 'gold-border');
+                chk.classList.remove('border-zinc-700');
+                svg.classList.remove('hidden');
             }
-            updateTotal();
+
+            updateSummary();
         }
 
-        function selectTime(button, time) {
-            document.querySelectorAll('.time-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            button.classList.add('selected');
-            
+        function selectTime(time) {
             selectedTime = time;
-            document.getElementById('selected-time-display').innerHTML = `Horário: <span class="text-amber-400 font-bold">${time}</span>`;
+            renderSlots();
+            updateSummary();
         }
 
-        function updateTotal() {
+        function updateSummary() {
             const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
             document.getElementById('total-price').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            
+            const timeLabel = document.getElementById('selected-time-label');
+            if (selectedTime) {
+                timeLabel.innerText = `Horário: ${selectedTime}`;
+                timeLabel.className = 'text-xs gold-text font-bold';
+            } else {
+                timeLabel.innerText = 'Horário: Nenhum';
+                timeLabel.className = 'text-xs text-zinc-500 font-medium';
+            }
+
+            const btn = document.getElementById('book-btn');
+            if (selectedServices.length > 0 && selectedTime) {
+                btn.disabled = false;
+                btn.className = 'flex-1 gold-gradient text-black font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-gold-500/20 transition-all duration-200 text-sm flex items-center justify-center space-x-2 cursor-pointer hover:opacity-95 active:scale-95';
+                btn.innerHTML = `<span>Agendar no WhatsApp</span>`;
+            } else {
+                btn.disabled = true;
+                btn.className = 'flex-1 bg-zinc-800 text-zinc-500 font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 text-sm flex items-center justify-center space-x-2 cursor-not-allowed';
+                btn.innerHTML = `<span>Agendar no WhatsApp</span>`;
+            }
         }
 
-        function enviarWhatsApp() {
-            if (selectedServices.length === 0) {
-                showToast('Por favor, selecione ao menos um serviço.');
-                return;
-            }
-            if (!selectedTime) {
-                showToast('Por favor, selecione um horário disponível.');
-                return;
-            }
+        function sendToWhatsApp() {
+            if (selectedServices.length === 0 || !selectedTime) return;
 
-            const listaNomes = selectedServices.map(s => `• ${s.name} (R$ ${s.price.toFixed(2).replace('.', ',')})`).join('%0A');
+            setBookedSlot(selectedTime);
+
+            const serviceNames = selectedServices.map(s => `• ${s.name} (R$ ${s.price.toFixed(2).replace('.', ',')})`).join('\n');
             const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
+
+            const message = `*AGENDAMENTO - BARBEARIA MR. DAN*\n\n` +
+                            `👤 *Serviços Escolhidos:*\n${serviceNames}\n\n` +
+                            `⏰ *Horário:* ${selectedTime}\n` +
+                            `💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n` +
+                            `Olá! Gostaria de confirmar meu horário.`;
+
+            const phone = "5521999300686";
+            const encoded = encodeURIComponent(message);
             
-            const mensagem = `Olá! Gostaria de confirmar meu agendamento na Barbearia Mr. Dan.%0A%0A*Horário Escolhido:* ${selectedTime}%0A%0A*Serviços:*%0A${listaNomes}%0A%0A*Total:* R$ ${total.toFixed(2).replace('.', ',')}`;
-            
-            const numeroWhatsApp = '5521999300686';
-            window.open(`https://wa.me/${numeroWhatsApp}?text=${mensagem}`, '_blank');
+            renderSlots();
+
+            window.location.href = `https://wa.me/${phone}?text=${encoded}`;
         }
+
+        renderServices();
+        renderSlots();
     </script>
 </body>
 </html>
