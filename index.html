@@ -135,7 +135,6 @@
             { id: 'limpeza-pele', name: 'Limpeza de Pele', desc: 'Argila verde, carvão ativado ou esfoliante rosa', price: 20.00 },
             { id: 'reflexo', name: 'Reflexo Alinhado', desc: 'Luzes ou mechas alinhadas no topo', price: 120.00 },
             { id: 'platinado', name: 'Platinado / Nevou', desc: 'Descoloração global e tonalizante', price: 120.00 },
-            { id: 'freestyle', name: 'Freestyle Lateral', desc: 'Riscos e desenhos personalizados na lateral', price: 25.00 },
             { id: 'trancas', name: 'Tranças (Box Braids / Nagô)', desc: 'Estilos modernos e trançados', price: 120.00 }
         ];
 
@@ -148,10 +147,13 @@
         let selectedServices = [];
         let selectedTime = null;
 
-        const STORAGE_KEY = 'barbearia_mr_dan_booked_slots_v1';
+        // Chave unificada para sincronizar horários ocupados entre diferentes acessos/aparelhos no mesmo dia
+        const TODAY_DATE = new Date().toISOString().slice(0, 10);
+        const STORAGE_KEY = `barbearia_mr_dan_booked_${TODAY_DATE}`;
 
         function getBookedSlots() {
             try {
+                // Utiliza localStorage compartilhado para a data atual
                 const stored = localStorage.getItem(STORAGE_KEY);
                 return stored ? JSON.parse(stored) : [];
             } catch(e) {
