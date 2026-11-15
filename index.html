@@ -74,13 +74,22 @@
             
             <h2 class="text-2xl font-black text-white tracking-wide">BARBEARIA MR. DAN</h2>
             <p class="text-xs gold-text font-semibold uppercase tracking-widest mt-0.5">Tradição e Estilo Desde 2018</p>
-            <p class="text-xs text-zinc-400 mt-2">Selecione os serviços desejados e escolha o horário para agendar direto pelo WhatsApp.</p>
+            <p class="text-xs text-zinc-400 mt-2">Informe seu nome, selecione os serviços e escolha o horário para agendar direto pelo WhatsApp.</p>
         </div>
 
-        <!-- 1. Serviços -->
+        <!-- 1. Nome do Cliente -->
         <section class="space-y-3">
             <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
                 <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">1</span>
+                <h3 class="font-bold text-base text-white">Seu Nome</h3>
+            </div>
+            <input type="text" id="client-name" oninput="updateSummary()" placeholder="Digite seu nome completo" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-gold-500 transition-colors">
+        </section>
+
+        <!-- 2. Serviços -->
+        <section class="space-y-3 pt-2">
+            <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
+                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">2</span>
                 <h3 class="font-bold text-base text-white">Escolha os Serviços</h3>
             </div>
             <p class="text-xs text-zinc-400">Toque para selecionar um ou mais serviços</p>
@@ -90,10 +99,10 @@
             </div>
         </section>
 
-        <!-- 2. Horários -->
+        <!-- 3. Horários -->
         <section class="space-y-3 pt-2">
             <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
-                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">2</span>
+                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">3</span>
                 <h3 class="font-bold text-base text-white">Escolha o Horário</h3>
             </div>
             <p class="text-xs text-zinc-400">Horários disponíveis para hoje:</p>
@@ -189,9 +198,9 @@
             let booked = getBookedSlots();
             const index = booked.indexOf(time);
             if (index > -1) {
-                booked.splice(index, 1); // Libera o horário
+                booked.splice(index, 1);
             } else {
-                booked.push(time); // Ocupa o horário
+                booked.push(time);
             }
             localStorage.setItem(STORAGE_KEY, JSON.stringify(booked));
             renderSlots();
@@ -294,6 +303,7 @@
         }
 
         function updateSummary() {
+            const clientName = document.getElementById('client-name').value.trim();
             const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
             document.getElementById('total-price').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
             
@@ -307,7 +317,8 @@
             }
 
             const btn = document.getElementById('book-btn');
-            if (selectedServices.length > 0 && selectedTime) {
+            // Só libera o botão se tiver nome digitado, pelo menos 1 serviço e um horário escolhido
+            if (clientName.length > 0 && selectedServices.length > 0 && selectedTime) {
                 btn.disabled = false;
                 btn.className = 'flex-1 gold-gradient text-black font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-gold-500/20 transition-all duration-200 text-sm flex items-center justify-center space-x-2 cursor-pointer hover:opacity-95 active:scale-95';
                 btn.innerHTML = `<span>Agendar no WhatsApp</span>`;
@@ -319,7 +330,8 @@
         }
 
         function sendToWhatsApp() {
-            if (selectedServices.length === 0 || !selectedTime) return;
+            const clientName = document.getElementById('client-name').value.trim();
+            if (!clientName || selectedServices.length === 0 || !selectedTime) return;
 
             setBookedSlot(selectedTime);
 
@@ -327,7 +339,8 @@
             const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
 
             const message = `*AGENDAMENTO - BARBEARIA MR. DAN*\n\n` +
-                            `👤 *Serviços Escolhidos:*\n${serviceNames}\n\n` +
+                            `👤 *Cliente:* ${clientName}\n\n` +
+                            `✂️ *Serviços Escolhidos:*\n${serviceNames}\n\n` +
                             `⏰ *Horário:* ${selectedTime}\n` +
                             `💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n` +
                             `Olá! Gostaria de confirmar meu horário.`;
