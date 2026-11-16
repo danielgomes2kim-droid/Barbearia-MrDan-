@@ -1,409 +1,552 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia Mr. Dan | Desde 2018</title>
-    <link rel="icon" type="image/png" href="profile_052046.png">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: {
-                            50: '#fbf7e6',
-                            100: '#f3e5ab',
-                            200: '#ead380',
-                            300: '#e1c155',
-                            400: '#d9af2a',
-                            500: '#b8921e',
-                            600: '#947417',
-                            700: '#705711',
-                            800: '#4d390b',
-                            900: '#291f06',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Barbearia Mr. Dan | Agendamento Online</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
     <style>
-        .gold-gradient {
-            background: linear-gradient(135deg, #d9af2a 0%, #b8921e 50%, #705711 100%);
+        :root {
+            --bg-dark: #0d0d0d;
+            --card-dark: #181818;
+            --gold: #d4af37;
+            --gold-hover: #f1c40f;
+            --text-light: #ffffff;
+            --text-muted: #a0a0a0;
+            --border-color: #2c2c2c;
+            --danger: #e74c3c;
+            --success: #2ecc71;
         }
-        .gold-border {
-            border-color: #d9af2a;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-        .gold-text {
-            color: #d9af2a;
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding-bottom: 110px;
+        }
+
+        header {
+            text-align: center;
+            padding: 25px 15px 15px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+        }
+
+        .logo-container img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            color: var(--gold);
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .section-title {
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin: 20px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--card-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-size: 1rem;
+            outline: none;
+            color-scheme: dark;
+        }
+
+        .input-control:focus {
+            border-color: var(--gold);
+        }
+
+        .service-card {
+            background-color: var(--card-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .service-card.selected {
+            border-color: var(--gold);
+            background-color: rgba(212, 175, 55, 0.12);
+        }
+
+        .service-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .service-info span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .service-price {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 1.05rem;
+            text-align: right;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .time-slot {
+            background-color: var(--card-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 12px 5px;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .time-slot.selected {
+            background-color: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+
+        .time-slot.occupied {
+            background-color: #121212;
+            color: #555;
+            border-color: #222;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+
+        .loading-text {
+            grid-column: span 3;
+            text-align: center;
+            color: var(--gold);
+            padding: 15px;
+            font-size: 0.9rem;
+        }
+
+        .footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #141414;
+            border-top: 1px solid var(--gold);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .total-info span {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .total-info strong {
+            font-size: 1.25rem;
+            color: var(--gold);
+        }
+
+        .btn-whatsapp {
+            background-color: var(--gold);
+            color: #000;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: var(--gold-hover);
+        }
+
+        .admin-trigger {
+            text-align: center;
+            margin-top: 35px;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+        }
+
+        .admin-trigger button {
+            background: none;
+            border: 1px solid #333;
+            color: #777;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .admin-panel {
+            display: none;
+            background-color: #141414;
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .admin-panel h4 {
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .admin-slot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #252525;
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+
+        .status-livre {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .status-ocupado {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
         }
     </style>
 </head>
-<body class="bg-black text-zinc-100 min-h-screen font-sans antialiased selection:bg-gold-500 selection:text-black pb-32">
+<body>
 
-    <!-- Header / Brand Section -->
-    <header class="bg-zinc-950 border-b border-zinc-800 sticky top-0 z-40 shadow-lg">
-        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2.5">
-                <div class="w-9 h-9 rounded-full gold-gradient p-0.5 shadow-md flex items-center justify-center overflow-hidden">
-                    <img src="profile_052046.png" alt="Barbearia Mr. Dan Logo" class="w-full h-full object-cover rounded-full">
+<header>
+    <div class="logo-container">
+        <img src="logo.png" alt="Logo Barbearia Mr. Dan" onerror="this.style.display='none'">
+    </div>
+    <h1>Barbearia Mr. Dan</h1>
+    <p>Estilo, precisão e atendimento exclusivo • Est. 2018</p>
+</header>
+
+<div class="container">
+    <div class="section-title">1. Seus Dados e Data</div>
+    <div class="input-group">
+        <label for="clientName">Seu Nome</label>
+        <input type="text" id="clientName" class="input-control" placeholder="Digite seu nome">
+    </div>
+    <div class="input-group">
+        <label for="bookingDate">Escolha o Dia</label>
+        <input type="date" id="bookingDate" class="input-control">
+    </div>
+
+    <div class="section-title">2. Escolha os Serviços</div>
+    <div id="servicesList"></div>
+
+    <div class="section-title">3. Horários Disponíveis (Tempo Real)</div>
+    <div class="time-grid" id="timeGrid">
+        <div class="loading-text">Carregando agenda na nuvem...</div>
+    </div>
+
+    <div class="admin-trigger">
+        <button onclick="toggleAdmin()">🔒 Área do Barbeiro</button>
+    </div>
+
+    <div class="admin-panel" id="adminPanel">
+        <h4>Gerenciar Horários do Dia (<span id="adminDateLabel"></span>)</h4>
+        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Toque no status para bloquear ou liberar um horário na nuvem:</p>
+        <div id="adminSlotsList"></div>
+    </div>
+</div>
+
+<div class="footer-bar">
+    <div class="total-info">
+        <span>Total Estimado</span>
+        <strong id="totalPrice">R$ 0,00</strong>
+    </div>
+    <button class="btn-whatsapp" onclick="sendWhatsApp()">Agendar no WhatsApp</button>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB96ZMSwaSTkPnP509aV5QRX1FEct7kHWI",
+        authDomain: "barbearia-mrdan.firebaseapp.com",
+        projectId: "barbearia-mrdan",
+        storageBucket: "barbearia-mrdan.firebasestorage.app",
+        messagingSenderId: "884797582464",
+        appId: "1:884797582464:web:fff57e824fa27080660a65"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const WHATSAPP_NUMBER = "5521999300686";
+    const ADMIN_PASSWORD = "dan2018";
+
+    const services = [
+        { id: 1, name: "Corte Masculino", desc: "Degradê, social ou tesoura", price: 35, prefix: "" },
+        { id: 2, name: "Barba Completa", desc: "Modelagem com toalha quente", price: 25, prefix: "" },
+        { id: 3, name: "Corte + Barba", desc: "Combo completo", price: 55, prefix: "" },
+        { id: 4, name: "Sobrancelha", desc: "Acabamento na navalha", price: 10, prefix: "" },
+        { id: 5, name: "Limpeza de Pele", desc: "Argila verde, carvão ativado ou máscara rosa", price: 40, prefix: "" },
+        { id: 6, name: "Trança Nagô", desc: "Desenhos e estilos variados", price: 120, prefix: "A partir de " },
+        { id: 7, name: "Box Braid", desc: "Tranças soltas tradicionais", price: 120, prefix: "A partir de " }
+    ];
+
+    const allTimes = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+
+    let selectedServices = [];
+    let selectedTime = null;
+    let occupiedTimes = [];
+    let unsubscribeSnapshot = null;
+    let isAdminAuthenticated = false;
+
+    const dateInput = document.getElementById('bookingDate');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+    dateInput.min = today;
+
+    function renderServices() {
+        const container = document.getElementById('servicesList');
+        container.innerHTML = services.map(s => `
+            <div class="service-card ${selectedServices.includes(s.id) ? 'selected' : ''}" onclick="toggleService(${s.id})">
+                <div class="service-info">
+                    <h3>${s.name}</h3>
+                    <span>${s.desc}</span>
                 </div>
-                <div>
-                    <h1 class="font-bold text-sm text-white tracking-wide">MR. DAN</h1>
-                    <p class="text-[10px] gold-text font-medium tracking-widest uppercase">Desde 2018</p>
+                <div class="service-price">
+                    <span style="font-size:0.75rem; font-weight:normal; display:block; color:#ccc;">${s.prefix}</span>
+                    R$ ${s.price.toFixed(2).replace('.', ',')}
                 </div>
             </div>
-            <span class="text-[11px] bg-zinc-900 border gold-border gold-text px-2 py-1 rounded-full font-semibold shadow-inner">
-                Hora Marcada
-            </span>
-        </div>
-    </header>
+        `).join('');
+    }
 
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto px-4 py-6 space-y-6">
-
-        <!-- Hero Banner with Big Logo -->
-        <div class="bg-gradient-to-br from-zinc-900 to-zinc-950 border gold-border rounded-2xl p-6 shadow-xl text-center relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 w-32 h-32 gold-gradient opacity-10 rounded-full blur-2xl"></div>
-            
-            <div class="w-24 h-24 mx-auto mb-3 rounded-full gold-gradient p-1 shadow-2xl flex items-center justify-center overflow-hidden border-2 gold-border">
-                <img src="profile_052046.png" alt="Barbearia Mr. Dan Logo" class="w-full h-full object-cover rounded-full">
-            </div>
-            
-            <h2 class="text-2xl font-black text-white tracking-wide">BARBEARIA MR. DAN</h2>
-            <p class="text-xs gold-text font-semibold uppercase tracking-widest mt-0.5">Tradição e Estilo Desde 2018</p>
-            <p class="text-xs text-zinc-400 mt-2">Escolha a data, seu nome, os serviços e o horário para agendar direto pelo WhatsApp.</p>
-        </div>
-
-        <!-- 1. Data do Agendamento -->
-        <section class="space-y-3">
-            <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
-                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">1</span>
-                <h3 class="font-bold text-base text-white">Escolha a Data</h3>
-            </div>
-            <input type="date" id="appointment-date" onchange="onDateChange()" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors">
-        </section>
-
-        <!-- 2. Nome do Cliente -->
-        <section class="space-y-3">
-            <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
-                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">2</span>
-                <h3 class="font-bold text-base text-white">Seu Nome</h3>
-            </div>
-            <input type="text" id="client-name" oninput="updateSummary()" placeholder="Digite seu nome completo" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-gold-500 transition-colors">
-        </section>
-
-        <!-- 3. Serviços -->
-        <section class="space-y-3 pt-2">
-            <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
-                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">3</span>
-                <h3 class="font-bold text-base text-white">Escolha os Serviços</h3>
-            </div>
-            <p class="text-xs text-zinc-400">Toque para selecionar um ou mais serviços</p>
-
-            <div id="services-list" class="space-y-2.5">
-                <!-- Inserido dinamicamente via JS -->
-            </div>
-        </section>
-
-        <!-- 4. Horários -->
-        <section class="space-y-3 pt-2">
-            <div class="flex items-center space-x-2 border-b border-zinc-800 pb-2">
-                <span class="w-6 h-6 rounded-full gold-gradient text-black font-bold flex items-center justify-center text-xs">4</span>
-                <h3 class="font-bold text-base text-white">Escolha o Horário</h3>
-            </div>
-            <p class="text-xs text-zinc-400" id="slots-date-label">Horários disponíveis:</p>
-
-            <div id="slots-grid" class="grid grid-cols-4 gap-2">
-                <!-- Inserido dinamicamente via JS -->
-            </div>
-        </section>
-
-        <!-- Painel Admin / Gestão do Barbeiro Protegido por Senha -->
-        <section class="pt-4 border-t border-zinc-900 text-center">
-            <button onclick="requestAdminAccess()" class="text-xs text-zinc-500 hover:gold-text underline transition-colors">
-                ⚙️ Painel do Barbeiro (Gerenciar Horários por Data)
-            </button>
-            
-            <div id="admin-panel" class="hidden mt-3 bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-left space-y-3 shadow-2xl">
-                <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
-                    <h4 class="text-xs font-bold gold-text uppercase tracking-wider">Painel de Controle (Protegido)</h4>
-                    <button onclick="toggleAdminPanel()" class="text-xs text-zinc-400 hover:text-white font-bold px-2 py-0.5 bg-zinc-900 rounded">✕ Fechar</button>
-                </div>
-                <p class="text-[11px] text-zinc-400">Gerenciando os horários para a data selecionada acima:</p>
-                <div id="admin-slots-grid" class="grid grid-cols-4 gap-2">
-                    <!-- Inserido via JS -->
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Sticky Footer / Summary -->
-    <footer class="fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800 p-4 z-50 shadow-2xl">
-        <div class="max-w-md mx-auto flex items-center justify-between gap-3">
-            <div>
-                <p class="text-xs text-zinc-400 uppercase tracking-wider font-medium">Total Selecionado</p>
-                <p id="total-price" class="text-xl font-extrabold gold-text">R$ 0,00</p>
-                <p id="selected-time-label" class="text-xs text-zinc-500 font-medium">Data / Horário: Nenhum</p>
-            </div>
-            <button onclick="sendToWhatsApp()" id="book-btn" disabled class="flex-1 bg-zinc-800 text-zinc-500 font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 text-sm flex items-center justify-center space-x-2 cursor-not-allowed">
-                <span>Agendar no WhatsApp</span>
-            </button>
-        </div>
-    </footer>
-
-    <!-- JavaScript Application Logic -->
-    <script>
-        const ADMIN_PASSWORD = "dan2018"; // Senha padrão do painel
-
-        const services = [
-            { id: 'corte-simples', name: 'Corte Simples', desc: 'Corte tradicional tesoura ou máquina', price: 25.00 },
-            { id: 'corte-disf', name: 'Corte Disfarçado', desc: 'Degradê lateral e acabamento alinhado', price: 40.00 },
-            { id: 'maquina-tesoura', name: 'Máquina e Tesoura', desc: 'Acabamento superior e lateral completo', price: 45.00 },
-            { id: 'corte-tesoura', name: 'Corte na Tesoura', desc: 'Estilo clássico ou moderno na tesoura', price: 60.00 },
-            { id: 'barba-modelada', name: 'Barba Modelada', desc: 'Toalha quente, navalha e acabamento', price: 20.00 },
-            { id: 'sobrancelha', name: 'Sobrancelha', desc: 'Design e alinhamento com navalha ou pinça', price: 20.00 },
-            { id: 'henna', name: 'Henna', desc: 'Pigmentação para barba ou sobrancelha', price: 45.00 },
-            { id: 'bigode', name: 'Bigode', desc: 'Modelagem e acabamento exclusivo', price: 10.00 },
-            { id: 'acabamento', name: 'Acabamento / Pezinho', desc: 'Contornos e limpeza na nuca e costeletas', price: 15.00 },
-            { id: 'pigmentacao', name: 'Pigmentação / Pretinho', desc: 'Acabamento com tinta ou jato seco', price: 20.00 },
-            { id: 'limpeza-pele', name: 'Limpeza de Pele', desc: 'Argila verde, carvão ativado ou esfoliante rosa', price: 20.00 },
-            { id: 'reflexo', name: 'Reflexo Alinhado', desc: 'Luzes ou mechas alinhadas no topo', price: 120.00 },
-            { id: 'platinado', name: 'Platinado / Nevou', desc: 'Descoloração global e tonalizante', price: 120.00 },
-            { id: 'trancas', name: 'Tranças (Box Braids / Nagô)', desc: 'Estilos modernos e trançados', price: 120.00, isStartingPrice: true }
-        ];
-
-        const timeSlots = [
-            "11:00", "12:00", "13:00", "14:00", 
-            "15:00", "16:00", "17:00", "18:00", 
-            "19:00", "20:00", "21:00", "22:00"
-        ];
-
-        let selectedServices = [];
-        let selectedTime = null;
-
-        const dateInput = document.getElementById('appointment-date');
-        const todayStr = new Date().toISOString().slice(0, 10);
-        dateInput.value = todayStr;
-        dateInput.min = todayStr;
-
-        function getSelectedDate() {
-            return dateInput.value || todayStr;
+    window.toggleService = function(id) {
+        if (selectedServices.includes(id)) {
+            selectedServices = selectedServices.filter(item => item !== id);
+        } else {
+            selectedServices.push(id);
         }
-
-        function getBookedSlotsForDate(date) {
-            try {
-                const stored = localStorage.getItem(`barbearia_mr_dan_booked_${date}`);
-                return stored ? JSON.parse(stored) : [];
-            } catch(e) {
-                return [];
-            }
-        }
-
-        function setBookedSlotForDate(date, time) {
-            const booked = getBookedSlotsForDate(date);
-            if (!booked.includes(time)) {
-                booked.push(time);
-                localStorage.setItem(`barbearia_mr_dan_booked_${date}`, JSON.stringify(booked));
-            }
-        }
-
-        function onDateChange() {
-            selectedTime = null;
-            renderSlots();
-            renderAdminSlots();
-            updateSummary();
-        }
-
-        function toggleAdminSlot(time) {
-            const currentDate = getSelectedDate();
-            let booked = getBookedSlotsForDate(currentDate);
-            const index = booked.indexOf(time);
-            if (index > -1) {
-                booked.splice(index, 1);
-            } else {
-                booked.push(time);
-            }
-            localStorage.setItem(`barbearia_mr_dan_booked_${currentDate}`, JSON.stringify(booked));
-            renderSlots();
-            renderAdminSlots();
-        }
-
-        function requestAdminAccess() {
-            const passwordInput = prompt("Digite a senha de Administrador da Barbearia:");
-            if (passwordInput === ADMIN_PASSWORD) {
-                toggleAdminPanel();
-            } else if (passwordInput !== null) {
-                alert("Senha incorreta! Acesso negado.");
-            }
-        }
-
-        function renderServices() {
-            const container = document.getElementById('services-list');
-            container.innerHTML = services.map(s => {
-                const priceText = s.isStartingPrice ? `A partir de R$ ${s.price.toFixed(2).replace('.', ',')}` : `R$ ${s.price.toFixed(2).replace('.', ',')}`;
-                return `
-                    <div onclick="toggleService('${s.id}')" id="srv-${s.id}" class="bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 flex items-center justify-between cursor-pointer transition-all duration-150 hover:border-gold-500">
-                        <div class="flex items-center space-x-3">
-                            <div id="chk-${s.id}" class="w-5 h-5 rounded-md border border-zinc-700 flex items-center justify-center transition-colors">
-                                <svg class="w-3 h-3 text-black hidden" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white">${s.name}</h4>
-                                <p class="text-xs text-zinc-400">${s.desc}</p>
-                            </div>
-                        </div>
-                        <span class="text-sm font-extrabold gold-text whitespace-nowrap ml-2">${priceText}</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderSlots() {
-            const container = document.getElementById('slots-grid');
-            const currentDate = getSelectedDate();
-            const bookedSlots = getBookedSlotsForDate(currentDate);
-
-            container.innerHTML = timeSlots.map(time => {
-                const isBooked = bookedSlots.includes(time);
-                const isSelected = selectedTime === time;
-
-                if (isBooked) {
-                    return `
-                        <div class="bg-zinc-950 border border-zinc-900 text-zinc-600 py-2.5 rounded-xl text-xs font-semibold text-center cursor-not-allowed opacity-40 relative">
-                            ${time}
-                            <span class="absolute inset-x-0 bottom-0.5 text-[9px] uppercase tracking-tighter text-zinc-600">Ocupado</span>
-                        </div>
-                    `;
-                }
-
-                return `
-                    <button onclick="selectTime('${time}')" id="slot-${time}" class="py-2.5 rounded-xl text-xs font-bold text-center transition-all duration-150 border ${isSelected ? 'gold-gradient text-black gold-border shadow-lg shadow-gold-500/20 font-extrabold scale-105' : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-gold-500'}">
-                        ${time}
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function renderAdminSlots() {
-            const container = document.getElementById('admin-slots-grid');
-            const currentDate = getSelectedDate();
-            const bookedSlots = getBookedSlotsForDate(currentDate);
-
-            container.innerHTML = timeSlots.map(time => {
-                const isBooked = bookedSlots.includes(time);
-                return `
-                    <button onclick="toggleAdminSlot('${time}')" class="py-2 rounded-lg text-xs font-bold text-center border transition-all ${isBooked ? 'bg-red-950/80 border-red-800 text-red-400' : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-gold-500'}">
-                        ${time} <br><span class="text-[9px] font-normal">${isBooked ? '🔴 Ocupado' : '🟢 Livre'}</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function toggleAdminPanel() {
-            const panel = document.getElementById('admin-panel');
-            panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) {
-                renderAdminSlots();
-            }
-        }
-
-        function toggleService(id) {
-            const service = services.find(s => s.id === id);
-            const index = selectedServices.findIndex(s => s.id === id);
-            const card = document.getElementById(`srv-${id}`);
-            const chk = document.getElementById(`chk-${id}`);
-            const svg = chk.querySelector('svg');
-
-            if (index > -1) {
-                selectedServices.splice(index, 1);
-                card.classList.remove('border-gold-500', 'bg-zinc-900/80');
-                chk.classList.remove('gold-gradient', 'gold-border');
-                chk.classList.add('border-zinc-700');
-                svg.classList.add('hidden');
-            } else {
-                selectedServices.push(service);
-                card.classList.add('border-gold-500', 'bg-zinc-900/80');
-                chk.classList.add('gold-gradient', 'gold-border');
-                chk.classList.remove('border-zinc-700');
-                svg.classList.remove('hidden');
-            }
-
-            updateSummary();
-        }
-
-        function selectTime(time) {
-            selectedTime = time;
-            renderSlots();
-            updateSummary();
-        }
-
-        function updateSummary() {
-            const clientName = document.getElementById('client-name').value.trim();
-            const rawDate = getSelectedDate();
-            const formattedDate = rawDate.split('-').reverse().join('/');
-
-            const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
-            document.getElementById('total-price').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-            
-            const timeLabel = document.getElementById('selected-time-label');
-            if (selectedTime) {
-                timeLabel.innerText = `${formattedDate} às ${selectedTime}`;
-                timeLabel.className = 'text-xs gold-text font-bold';
-            } else {
-                timeLabel.innerText = 'Data / Horário: Nenhum';
-                timeLabel.className = 'text-xs text-zinc-500 font-medium';
-            }
-
-            const btn = document.getElementById('book-btn');
-            if (clientName.length > 0 && selectedServices.length > 0 && selectedTime) {
-                btn.disabled = false;
-                btn.className = 'flex-1 gold-gradient text-black font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-gold-500/20 transition-all duration-200 text-sm flex items-center justify-center space-x-2 cursor-pointer hover:opacity-95 active:scale-95';
-                btn.innerHTML = `<span>Agendar no WhatsApp</span>`;
-            } else {
-                btn.disabled = true;
-                btn.className = 'flex-1 bg-zinc-800 text-zinc-500 font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 text-sm flex items-center justify-center space-x-2 cursor-not-allowed';
-                btn.innerHTML = `<span>Agendar no WhatsApp</span>`;
-            }
-        }
-
-        function sendToWhatsApp() {
-            const clientName = document.getElementById('client-name').value.trim();
-            const rawDate = getSelectedDate();
-            const formattedDate = rawDate.split('-').reverse().join('/');
-
-            if (!clientName || selectedServices.length === 0 || !selectedTime) return;
-
-            setBookedSlotForDate(rawDate, selectedTime);
-
-            const serviceNames = selectedServices.map(s => {
-                const priceStr = s.isStartingPrice ? `A partir de R$ ${s.price.toFixed(2).replace('.', ',')}` : `R$ ${s.price.toFixed(2).replace('.', ',')}`;
-                return `• ${s.name} (${priceStr})`;
-            }).join('\n');
-            
-            const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
-
-            const message = `*AGENDAMENTO - BARBEARIA MR. DAN*\n\n` +
-                            `👤 *Cliente:* ${clientName}\n\n` +
-                            `📅 *Data:* ${formattedDate}\n` +
-                            `⏰ *Horário:* ${selectedTime}\n\n` +
-                            `✂️ *Serviços Escolhidos:*\n${serviceNames}\n\n` +
-                            `💰 *Total Base:* R$ ${total.toFixed(2).replace('.', ',')}\n\n` +
-                            `Olá! Gostaria de confirmar meu agendamento.`;
-
-            const phone = "5521999300686";
-            const encoded = encodeURIComponent(message);
-            
-            renderSlots();
-
-            window.location.href = `https://wa.me/${phone}?text=${encoded}`;
-        }
-
         renderServices();
-        renderSlots();
-    </script>
+        updateTotal();
+    };
+
+    function updateTotal() {
+        const total = selectedServices.reduce((sum, id) => {
+            const service = services.find(s => s.id === id);
+            return sum + (service ? service.price : 0);
+        }, 0);
+        document.getElementById('totalPrice').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    }
+
+    function listenToDateSlots(dateStr) {
+        if (unsubscribeSnapshot) {
+            unsubscribeSnapshot();
+        }
+        selectedTime = null;
+        document.getElementById('adminDateLabel').innerText = dateStr.split('-').reverse().join('/');
+        
+        const docRef = doc(db, "agendamentos", dateStr);
+        unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                occupiedTimes = docSnap.data().ocupados || [];
+            } else {
+                occupiedTimes = [];
+            }
+            if (occupiedTimes.includes(selectedTime)) {
+                selectedTime = null;
+            }
+            renderTimes();
+            if (isAdminAuthenticated) renderAdminPanel();
+        });
+    }
+
+    function renderTimes() {
+        const grid = document.getElementById('timeGrid');
+        grid.innerHTML = allTimes.map(time => {
+            const isOccupied = occupiedTimes.includes(time);
+            const isSelected = selectedTime === time;
+            return `
+                <div class="time-slot ${isOccupied ? 'occupied' : ''} ${isSelected ? 'selected' : ''}" 
+                     onclick="${isOccupied ? '' : `selectTime('${time}')`}">
+                    ${time}
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.selectTime = function(time) {
+        selectedTime = time;
+        renderTimes();
+    };
+
+    window.toggleAdmin = function() {
+        const panel = document.getElementById('adminPanel');
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+            return;
+        }
+        if (!isAdminAuthenticated) {
+            const pass = prompt("Digite a senha do Barbeiro:");
+            if (pass !== ADMIN_PASSWORD) {
+                alert("Senha incorreta!");
+                return;
+            }
+            isAdminAuthenticated = true;
+        }
+        panel.style.display = 'block';
+        renderAdminPanel();
+    };
+
+    function renderAdminPanel() {
+        const list = document.getElementById('adminSlotsList');
+        list.innerHTML = allTimes.map(time => {
+            const isOccupied = occupiedTimes.includes(time);
+            return `
+                <div class="admin-slot">
+                    <span>Horário: <strong>${time}</strong></span>
+                    <button class="badge-status ${isOccupied ? 'status-ocupado' : 'status-livre'}" 
+                            onclick="toggleSlotCloud('${time}')">
+                        ${isOccupied ? 'OCUPADO (Liberar)' : 'LIVRE (Bloquear)'}
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.toggleSlotCloud = async function(time) {
+        const dateStr = dateInput.value;
+        let updated = [...occupiedTimes];
+        if (updated.includes(time)) {
+            updated = updated.filter(t => t !== time);
+        } else {
+            updated.push(time);
+        }
+        try {
+            await setDoc(doc(db, "agendamentos", dateStr), { ocupados: updated }, { merge: true });
+        } catch (error) {
+            alert("Erro ao atualizar na nuvem. Verifique se o Firestore foi ativado em Modo de Teste.");
+            console.error(error);
+        }
+    };
+
+    window.sendWhatsApp = async function() {
+        const name = document.getElementById('clientName').value.trim();
+        const dateStr = dateInput.value;
+
+        if (!name) {
+            alert("Por favor, digite seu nome.");
+            return;
+        }
+        if (selectedServices.length === 0) {
+            alert("Selecione pelo menos um serviço.");
+            return;
+        }
+        if (!selectedTime) {
+            alert("Escolha um horário disponível.");
+            return;
+        }
+
+        const updated = [...occupiedTimes, selectedTime];
+        try {
+            await setDoc(doc(db, "agendamentos", dateStr), { ocupados: updated }, { merge: true });
+        } catch (e) {
+            console.error(e);
+        }
+
+        const formattedDate = dateStr.split('-').reverse().join('/');
+        const chosenServices = selectedServices.map(id => {
+            const s = services.find(item => item.id === id);
+            return `• ${s.name} (${s.prefix}R$ ${s.price.toFixed(2).replace('.', ',')})`;
+        }).join('\n');
+
+        const total = document.getElementById('totalPrice').innerText;
+
+        const message = `Olá, *Barbearia Mr. Dan*! Gostaria de confirmar meu agendamento:\n\n` +
+                        `*Cliente:* ${name}\n` +
+                        `*Data:* ${formattedDate}\n` +
+                        `*Horário:* ${selectedTime}\n\n` +
+                        `*Serviços:*\n${chosenServices}\n\n` +
+                        `*Total Estimado:* ${total}`;
+
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    };
+
+    dateInput.addEventListener('change', (e) => {
+        listenToDateSlots(e.target.value);
+    });
+
+    renderServices();
+    listenToDateSlots(today);
+</script>
+
 </body>
 </html>
