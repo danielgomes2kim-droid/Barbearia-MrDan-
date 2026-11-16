@@ -8,13 +8,13 @@
     <link rel="apple-touch-icon" href="logo.png">
     <style>
         :root {
-            --bg-dark: #0d0d0d;
-            --card-dark: #161616;
+            --bg-color: #0c0c0c;
+            --card-bg: #161616;
             --gold: #d4af37;
             --gold-hover: #f1c40f;
-            --text-light: #ffffff;
+            --text-main: #ffffff;
             --text-muted: #a0a0a0;
-            --border-color: #2c2c2c;
+            --border-color: #262626;
             --danger: #e74c3c;
             --success: #2ecc71;
         }
@@ -27,32 +27,32 @@
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             padding-bottom: 120px;
         }
 
         header {
             text-align: center;
-            padding: 30px 15px 20px;
+            padding: 35px 20px 20px;
             border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            background: linear-gradient(180deg, #181818 0%, #0c0c0c 100%);
         }
 
         .logo-container img {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid var(--gold);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-            margin-bottom: 12px;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
+            margin-bottom: 15px;
         }
 
         header h1 {
             color: var(--gold);
-            font-size: 1.8rem;
-            letter-spacing: 1.5px;
+            font-size: 1.85rem;
+            letter-spacing: 2px;
             text-transform: uppercase;
             font-weight: 700;
         }
@@ -60,7 +60,7 @@
         header p {
             color: var(--text-muted);
             font-size: 0.9rem;
-            margin-top: 5px;
+            margin-top: 6px;
             letter-spacing: 0.5px;
         }
 
@@ -95,11 +95,11 @@
 
         .input-control {
             width: 100%;
-            padding: 14px 15px;
-            background-color: var(--card-dark);
+            padding: 14px 16px;
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            color: var(--text-light);
+            color: var(--text-main);
             font-size: 1rem;
             outline: none;
             color-scheme: dark;
@@ -110,10 +110,10 @@
         }
 
         .service-card {
-            background-color: var(--card-dark);
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 16px;
+            padding: 14px 16px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
@@ -128,22 +128,23 @@
         }
 
         .service-info h3 {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 3px;
+            color: var(--text-main);
+            margin-bottom: 2px;
         }
 
         .service-info span {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
         .service-price {
             color: var(--gold);
             font-weight: bold;
-            font-size: 1.05rem;
+            font-size: 1rem;
             text-align: right;
+            white-space: nowrap;
         }
 
         .time-grid {
@@ -153,9 +154,9 @@
         }
 
         .time-slot {
-            background-color: var(--card-dark);
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            color: var(--text-light);
+            color: var(--text-main);
             padding: 14px 5px;
             text-align: center;
             border-radius: 12px;
@@ -172,8 +173,8 @@
 
         .time-slot.occupied {
             background-color: #121212;
-            color: #555;
-            border-color: #222;
+            color: #444;
+            border-color: #1f1f1f;
             text-decoration: line-through;
             cursor: not-allowed;
         }
@@ -198,7 +199,7 @@
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.6);
         }
 
         .total-info span {
@@ -236,7 +237,7 @@
         }
 
         .admin-trigger button {
-            background: var(--card-dark);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             padding: 10px 18px;
@@ -253,7 +254,7 @@
 
         .admin-panel {
             display: none;
-            background-color: var(--card-dark);
+            background-color: var(--card-bg);
             border: 1px solid var(--gold);
             border-radius: 12px;
             padding: 18px;
@@ -354,19 +355,25 @@
     </div>
 
     <div class="admin-trigger">
-        <button onclick="toggleAdmin()">🔒 Área do Barbeiro & Gestão</button>
+        <button onclick="toggleAdmin()">🔒 Painel de Relatórios & Gestão</button>
     </div>
 
     <div class="admin-panel" id="adminPanel">
-        <h4>Painel Financeiro & Gestão</h4>
+        <h4>Relatório Financeiro do Dia</h4>
         <div class="financial-box">
             <div class="financial-card">
-                <span>Faturamento do Dia</span>
+                <span>Faturamento Total</span>
                 <strong id="adminDayRevenue">R$ 0,00</strong>
             </div>
             <div class="financial-card">
-                <span>Agendamentos Hoje</span>
+                <span>Agendamentos</span>
                 <strong id="adminDayCount">0</strong>
+            </div>
+        </div>
+        <div class="financial-box">
+            <div class="financial-card" style="grid-column: span 2;">
+                <span>Ticket Médio por Cliente</span>
+                <strong id="adminTicketMedio">R$ 0,00</strong>
             </div>
         </div>
 
@@ -403,14 +410,22 @@
     const WHATSAPP_NUMBER = "5521999300686";
     const ADMIN_PASSWORD = "dan2018";
 
+    // Sua lista completa e exata de serviços e preços
     const services = [
-        { id: 1, name: "Corte Masculino", desc: "Degradê, social ou tesoura", price: 35, prefix: "" },
-        { id: 2, name: "Barba Completa", desc: "Modelagem com toalha quente", price: 25, prefix: "" },
-        { id: 3, name: "Corte + Barba", desc: "Combo completo", price: 55, prefix: "" },
-        { id: 4, name: "Sobrancelha", desc: "Acabamento na navalha", price: 10, prefix: "" },
-        { id: 5, name: "Limpeza de Pele", desc: "Argila verde, carvão ativado ou máscara rosa", price: 40, prefix: "" },
-        { id: 6, name: "Trança Nagô", desc: "Desenhos e estilos variados", price: 120, prefix: "A partir de " },
-        { id: 7, name: "Box Braid", desc: "Tranças soltas tradicionais", price: 120, prefix: "A partir de " }
+        { id: 1, name: "Corte Simples", desc: "Corte tradicional", price: 25, prefix: "" },
+        { id: 2, name: "Corte Disfarçado", desc: "Degradê de alta precisão", price: 40, prefix: "" },
+        { id: 3, name: "Máquina e Tesoura", desc: "Acabamento completo", price: 45, prefix: "" },
+        { id: 4, name: "Tesoura", desc: "Corte totalmente na tesoura", price: 60, prefix: "" },
+        { id: 5, name: "Barba Modelada", desc: "Modelagem profissional", price: 20, prefix: "" },
+        { id: 6, name: "Bigode", desc: "Ajuste e acabamento", price: 10, prefix: "" },
+        { id: 7, name: "Acabamento (Pezinho)", desc: "Contorno na navalha", price: 15, prefix: "" },
+        { id: 8, name: "Sobrancelhas", desc: "Design e limpeza", price: 20, prefix: "" },
+        { id: 9, name: "Henna", desc: "Aplicação nas sobrancelhas", price: 45, prefix: "" },
+        { id: 10, name: "Limpeza de Pele", desc: "Cuidados faciais", price: 20, prefix: "" },
+        { id: 11, name: "Pigmentação (Pretinho)", desc: "Disfarce e acabamento", price: 25, prefix: "" },
+        { id: 12, name: "Reflexo Alinhado", desc: "Luzes e mechas", price: 120, prefix: "" },
+        { id: 13, name: "Platinado", desc: "Descoloração total", price: 120, prefix: "" },
+        { id: 14, name: "Tranças Boxing Braids / Nagô", desc: "Desenhos e estilos variados", price: 120, prefix: "A partir de " }
     ];
 
     const allTimes = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
@@ -435,7 +450,7 @@
                     <span>${s.desc}</span>
                 </div>
                 <div class="service-price">
-                    <span style="font-size:0.7rem; font-weight:normal; display:block; color:#aaa;">${s.prefix}</span>
+                    <span style="font-size:0.65rem; font-weight:normal; display:block; color:#aaa;">${s.prefix}</span>
                     R$ ${s.price.toFixed(2).replace('.', ',')}
                 </div>
             </div>
@@ -533,8 +548,11 @@
             }
         });
 
+        const ticketMedio = totalDayBookings > 0 ? (totalDayRevenue / totalDayBookings) : 0;
+
         document.getElementById('adminDayRevenue').innerText = `R$ ${totalDayRevenue.toFixed(2).replace('.', ',')}`;
         document.getElementById('adminDayCount').innerText = totalDayBookings;
+        document.getElementById('adminTicketMedio').innerText = `R$ ${ticketMedio.toFixed(2).replace('.', ',')}`;
 
         const list = document.getElementById('adminSlotsList');
         list.innerHTML = allTimes.map(time => {
