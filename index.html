@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia Mr. Dan | Agendamento Online</title>
+    <title>Barbearia Mr. Dan | Gestão e Agendamento</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <style>
@@ -250,22 +250,52 @@
 
         .admin-panel h4 {
             color: var(--gold);
-            margin-bottom: 10px;
-            font-size: 0.95rem;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            border-bottom: 1px solid #252525;
+            padding-bottom: 8px;
+        }
+
+        .financial-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .financial-card {
+            background-color: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .financial-card span {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .financial-card strong {
+            font-size: 1.1rem;
+            color: var(--gold);
         }
 
         .admin-slot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #252525;
+            font-size: 0.9rem;
         }
 
         .badge-status {
-            padding: 4px 10px;
+            padding: 5px 10px;
             border-radius: 6px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
             border: none;
@@ -312,12 +342,24 @@
     </div>
 
     <div class="admin-trigger">
-        <button onclick="toggleAdmin()">🔒 Área do Barbeiro</button>
+        <button onclick="toggleAdmin()">🔒 Área do Barbeiro & Gestão</button>
     </div>
 
     <div class="admin-panel" id="adminPanel">
-        <h4>Gerenciar Horários do Dia (<span id="adminDateLabel"></span>)</h4>
-        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Toque no status para bloquear ou liberar um horário na nuvem:</p>
+        <h4>Painel Financeiro & Gestão</h4>
+        <div class="financial-box">
+            <div class="financial-card">
+                <span>Faturamento do Dia</span>
+                <strong id="adminDayRevenue">R$ 0,00</strong>
+            </div>
+            <div class="financial-card">
+                <span>Agendamentos Hoje</span>
+                <strong id="adminDayCount">0</strong>
+            </div>
+        </div>
+
+        <h4>Gerenciar Horários (<span id="adminDateLabel"></span>)</h4>
+        <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Toque para bloquear/liberar ou ver detalhes:</p>
         <div id="adminSlotsList"></div>
     </div>
 </div>
@@ -363,7 +405,7 @@
 
     let selectedServices = [];
     let selectedTime = null;
-    let occupiedTimes = [];
+    let appointmentData = { ocupados: [], detalhes: {} };
     let unsubscribeSnapshot = null;
     let isAdminAuthenticated = false;
 
@@ -416,11 +458,14 @@
         const docRef = doc(db, "agendamentos", dateStr);
         unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
-                occupiedTimes = docSnap.data().ocupados || [];
+                const data = docSnap.data();
+                appointmentData.ocupados = data.ocupados || [];
+                appointmentData.detalhes = data.detalhes || {};
             } else {
-                occupiedTimes = [];
+                appointmentData.ocupados = [];
+                appointmentData.detalhes = {};
             }
-            if (occupiedTimes.includes(selectedTime)) {
+            if (appointmentData.ocupados.includes(selectedTime)) {
                 selectedTime = null;
             }
             renderTimes();
@@ -431,7 +476,7 @@
     function renderTimes() {
         const grid = document.getElementById('timeGrid');
         grid.innerHTML = allTimes.map(time => {
-            const isOccupied = occupiedTimes.includes(time);
+            const isOccupied = appointmentData.ocupados.includes(time);
             const isSelected = selectedTime === time;
             return `
                 <div class="time-slot ${isOccupied ? 'occupied' : ''} ${isSelected ? 'selected' : ''}" 
@@ -466,12 +511,31 @@
     };
 
     function renderAdminPanel() {
+        let totalDayRevenue = 0;
+        let totalDayBookings = appointmentData.ocupados.length;
+
+        appointmentData.ocupados.forEach(time => {
+            const detail = appointmentData.detalhes[time];
+            if (detail && detail.totalValue) {
+                totalDayRevenue += detail.totalValue;
+            }
+        });
+
+        document.getElementById('adminDayRevenue').innerText = `R$ ${totalDayRevenue.toFixed(2).replace('.', ',')}`;
+        document.getElementById('adminDayCount').innerText = totalDayBookings;
+
         const list = document.getElementById('adminSlotsList');
         list.innerHTML = allTimes.map(time => {
-            const isOccupied = occupiedTimes.includes(time);
+            const isOccupied = appointmentData.ocupados.includes(time);
+            const detail = appointmentData.detalhes[time];
+            const clientInfo = detail ? `<br><span style="font-size:0.75rem; color:#d4af37;">Cliente: ${detail.clientName} (R$ ${detail.totalValue.toFixed(2).replace('.', ',')})</span>` : '';
+            
             return `
                 <div class="admin-slot">
-                    <span>Horário: <strong>${time}</strong></span>
+                    <div>
+                        <span><strong>${time}</strong></span>
+                        ${clientInfo}
+                    </div>
                     <button class="badge-status ${isOccupied ? 'status-ocupado' : 'status-livre'}" 
                             onclick="toggleSlotCloud('${time}')">
                         ${isOccupied ? 'OCUPADO (Liberar)' : 'LIVRE (Bloquear)'}
@@ -483,16 +547,24 @@
 
     window.toggleSlotCloud = async function(time) {
         const dateStr = dateInput.value;
-        let updated = [...occupiedTimes];
-        if (updated.includes(time)) {
-            updated = updated.filter(t => t !== time);
+        let updatedOccupied = [...appointmentData.ocupados];
+        let updatedDetails = { ...appointmentData.detalhes };
+
+        if (updatedOccupied.includes(time)) {
+            updatedOccupied = updatedOccupied.filter(t => t !== time);
+            delete updatedDetails[time];
         } else {
-            updated.push(time);
+            updatedOccupied.push(time);
+            updatedDetails[time] = { clientName: "Bloqueado pelo Barbeiro", totalValue: 0 };
         }
+
         try {
-            await setDoc(doc(db, "agendamentos", dateStr), { ocupados: updated }, { merge: true });
+            await setDoc(doc(db, "agendamentos", dateStr), { 
+                ocupados: updatedOccupied,
+                detalhes: updatedDetails
+            }, { merge: true });
         } catch (error) {
-            alert("Erro ao atualizar na nuvem. Verifique se o Firestore foi ativado em Modo de Teste.");
+            alert("Erro ao atualizar na nuvem.");
             console.error(error);
         }
     };
@@ -514,9 +586,22 @@
             return;
         }
 
-        const updated = [...occupiedTimes, selectedTime];
+        const totalValue = selectedServices.reduce((sum, id) => {
+            const service = services.find(s => s.id === id);
+            return sum + (service ? service.price : 0);
+        }, 0);
+
+        const updatedOccupied = [...appointmentData.ocupados, selectedTime];
+        const updatedDetails = {
+            ...appointmentData.detalhes,
+            [selectedTime]: { clientName: name, totalValue: totalValue }
+        };
+
         try {
-            await setDoc(doc(db, "agendamentos", dateStr), { ocupados: updated }, { merge: true });
+            await setDoc(doc(db, "agendamentos", dateStr), { 
+                ocupados: updatedOccupied,
+                detalhes: updatedDetails
+            }, { merge: true });
         } catch (e) {
             console.error(e);
         }
