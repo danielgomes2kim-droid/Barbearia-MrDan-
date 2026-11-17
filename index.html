@@ -156,22 +156,24 @@
             box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
         }
 
-        .btn-hero-secondary {
+        .hero-input-container {
             background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 12px;
+            border: 1px solid var(--gold);
             border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            transition: border-color 0.2s;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
         }
 
-        .btn-hero-secondary:hover {
-            border-color: var(--gold);
+        .hero-input-container input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            padding: 8px 0;
+            outline: none;
+            text-align: center;
         }
 
         .container {
@@ -190,33 +192,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 6px;
-        }
-
-        .input-control {
-            width: 100%;
-            padding: 14px 16px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-main);
-            font-size: 1rem;
-            outline: none;
-            color-scheme: dark;
-        }
-
-        .input-control:focus {
-            border-color: var(--gold);
         }
 
         .service-card {
@@ -446,7 +421,7 @@
             <span>Desde 2018</span>
         </div>
     </div>
-    <a href="#dados-agendamento" class="btn-nav-agendar" onclick="document.getElementById('bookingDate').showPicker();">Agendar Agora</a>
+    <button class="btn-nav-agendar" onclick="document.getElementById('bookingDate').showPicker();">Escolher Data</button>
 </div>
 
 <!-- Capa Principal (Hero) -->
@@ -457,25 +432,20 @@
     <h1>Barbearia Mr. Dan</h1>
     <p>Tradição, estilo e atendimento de alta qualidade. O visual impecável que você procura está aqui.</p>
     <div class="hero-buttons">
-        <button class="btn-hero-primary" onclick="document.getElementById('bookingDate').showPicker();">📅 Escolher Data e Agendar</button>
-        <a href="#secao-servicos" class="btn-hero-secondary">Ver Tabela de Preços</a>
+        <button class="btn-hero-primary" onclick="document.getElementById('bookingDate').showPicker();">📅 Escolher Data de Agendamento</button>
+        <div class="hero-input-container">
+            <input type="text" id="clientName" placeholder="Digite seu nome aqui...">
+        </div>
     </div>
 </header>
 
 <div class="container">
-    <div id="dados-agendamento" class="section-title">1. Seus Dados</div>
-    <div class="input-group">
-        <label for="clientName">Seu Nome</label>
-        <input type="text" id="clientName" class="input-control" placeholder="Digite seu nome">
-    </div>
-    
-    <!-- Input de data escondido visualmente mas acionado pelos botões da capa -->
-    <div class="input-group" style="display:none;">
-        <label for="bookingDate">Escolha o Dia</label>
-        <input type="date" id="bookingDate" class="input-control">
+    <!-- Input de data escondido acionado pelos botões -->
+    <div style="display:none;">
+        <input type="date" id="bookingDate">
     </div>
 
-    <div class="section-title" id="secao-servicos">2. Escolha os Serviços</div>
+    <div class="section-title">1. Escolha os Serviços</div>
     <div id="servicesList"></div>
 
     <div class="section-title">3. Horários Disponíveis (<span id="selectedDateDisplay">Hoje</span>)</div>
