@@ -47,6 +47,7 @@
             border: 3px solid var(--gold);
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
             margin-bottom: 15px;
+            display: inline-block;
         }
 
         header h1 {
@@ -329,7 +330,8 @@
 
 <header>
     <div class="logo-container">
-        <img src="logo.png" alt="Logo Barbearia Mr. Dan" onerror="this.style.display='none'">
+        <!-- Tenta carregar logo.png, se não achar tenta Logo.png ou LOGO.png -->
+        <img src="logo.png" alt="Logo Barbearia Mr. Dan" onerror="this.onerror=null; this.src='Logo.png';">
     </div>
     <h1>Barbearia Mr. Dan</h1>
     <p>Estilo, precisão e atendimento exclusivo • Est. 2018</p>
