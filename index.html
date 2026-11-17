@@ -32,24 +32,88 @@
             padding-bottom: 120px;
         }
 
-        header {
-            text-align: center;
-            padding: 35px 20px 20px;
+        /* Barra Superior Fixa */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(12, 12, 12, 0.95);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(180deg, #181818 0%, #0c0c0c 100%);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
         }
 
-        .logo-container img {
-            width: 140px;
-            height: 140px;
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: contain;
+            background-color: #1a1a1a;
+            border: 1.5px solid var(--gold);
+        }
+
+        .nav-text h2 {
+            font-size: 0.9rem;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-text span {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-nav-agendar {
+            background: linear-gradient(135deg, var(--gold) 0%, #aa8c2c 100%);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-nav-agendar:active {
+            transform: scale(0.95);
+        }
+
+        /* Seção de Capa / Hero */
+        header {
+            text-align: center;
+            padding: 90px 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            background: radial-gradient(circle at center, #181818 0%, #0c0c0c 100%);
+        }
+
+        .hero-logo-container img {
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             object-fit: contain;
             background-color: #1a1a1a;
             border: 3px solid var(--gold);
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
-            margin-bottom: 15px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.35);
+            margin-bottom: 20px;
             display: inline-block;
-            padding: 5px;
+            padding: 6px;
         }
 
         header h1 {
@@ -58,13 +122,56 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             font-weight: 700;
+            margin-bottom: 10px;
         }
 
         header p {
             color: var(--text-muted);
+            font-size: 0.85rem;
+            max-width: 380px;
+            margin: 0 auto 20px;
+            line-height: 1.4;
+            letter-spacing: 0.3px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .btn-hero-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #aa8c2c 100%);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+        }
+
+        .btn-hero-secondary {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
             font-size: 0.9rem;
-            margin-top: 6px;
-            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            transition: border-color 0.2s;
+        }
+
+        .btn-hero-secondary:hover {
+            border-color: var(--gold);
         }
 
         .container {
@@ -330,15 +437,32 @@
 </head>
 <body>
 
+<!-- Barra Superior Fixa -->
+<div class="top-navbar">
+    <div class="nav-brand">
+        <img src="profile_052046.png" alt="Logo">
+        <div class="nav-text">
+            <h2>Mr. Dan</h2>
+            <span>Desde 2018</span>
+        </div>
+    </div>
+    <a href="#dados-agendamento" class="btn-nav-agendar">Agendar Agora</a>
+</div>
+
+<!-- Capa Principal (Hero) -->
 <header>
-    <div class="logo-container">
+    <div class="hero-logo-container">
         <img src="profile_052046.png" alt="Logo Barbearia Mr. Dan">
     </div>
     <h1>Barbearia Mr. Dan</h1>
-    <p>Estilo, precisão e atendimento exclusivo • Est. 2018</p>
+    <p>Tradição, estilo e atendimento de alta qualidade. O visual impecável que você procura está aqui.</p>
+    <div class="hero-buttons">
+        <a href="#dados-agendamento" class="btn-hero-primary">📅 Agendar Horário Online</a>
+        <a href="#secao-servicos" class="btn-hero-secondary">Ver Tabela de Preços</a>
+    </div>
 </header>
 
-<div class="container">
+<div class="container" id="dados-agendamento">
     <div class="section-title">1. Seus Dados e Data</div>
     <div class="input-group">
         <label for="clientName">Seu Nome</label>
@@ -349,7 +473,7 @@
         <input type="date" id="bookingDate" class="input-control">
     </div>
 
-    <div class="section-title">2. Escolha os Serviços</div>
+    <div class="section-title" id="secao-servicos">2. Escolha os Serviços</div>
     <div id="servicesList"></div>
 
     <div class="section-title">3. Horários Disponíveis (Tempo Real)</div>
