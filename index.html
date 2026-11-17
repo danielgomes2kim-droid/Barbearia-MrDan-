@@ -446,7 +446,7 @@
             <span>Desde 2018</span>
         </div>
     </div>
-    <a href="#dados-agendamento" class="btn-nav-agendar">Agendar Agora</a>
+    <a href="#dados-agendamento" class="btn-nav-agendar" onclick="document.getElementById('bookingDate').showPicker();">Agendar Agora</a>
 </div>
 
 <!-- Capa Principal (Hero) -->
@@ -457,18 +457,20 @@
     <h1>Barbearia Mr. Dan</h1>
     <p>Tradição, estilo e atendimento de alta qualidade. O visual impecável que você procura está aqui.</p>
     <div class="hero-buttons">
-        <a href="#dados-agendamento" class="btn-hero-primary">📅 Agendar Horário Online</a>
+        <button class="btn-hero-primary" onclick="document.getElementById('bookingDate').showPicker();">📅 Escolher Data e Agendar</button>
         <a href="#secao-servicos" class="btn-hero-secondary">Ver Tabela de Preços</a>
     </div>
 </header>
 
-<div class="container" id="dados-agendamento">
-    <div class="section-title">1. Seus Dados e Data</div>
+<div class="container">
+    <div id="dados-agendamento" class="section-title">1. Seus Dados</div>
     <div class="input-group">
         <label for="clientName">Seu Nome</label>
         <input type="text" id="clientName" class="input-control" placeholder="Digite seu nome">
     </div>
-    <div class="input-group">
+    
+    <!-- Input de data escondido visualmente mas acionado pelos botões da capa -->
+    <div class="input-group" style="display:none;">
         <label for="bookingDate">Escolha o Dia</label>
         <input type="date" id="bookingDate" class="input-control">
     </div>
@@ -476,7 +478,7 @@
     <div class="section-title" id="secao-servicos">2. Escolha os Serviços</div>
     <div id="servicesList"></div>
 
-    <div class="section-title">3. Horários Disponíveis (Tempo Real)</div>
+    <div class="section-title">3. Horários Disponíveis (<span id="selectedDateDisplay">Hoje</span>)</div>
     <div class="time-grid" id="timeGrid">
         <div class="loading-text">Carregando agenda na nuvem...</div>
     </div>
@@ -606,7 +608,9 @@
             unsubscribeSnapshot();
         }
         selectedTime = null;
-        document.getElementById('adminDateLabel').innerText = dateStr.split('-').reverse().join('/');
+        const formattedDateDisplay = dateStr.split('-').reverse().join('/');
+        document.getElementById('selectedDateDisplay').innerText = formattedDateDisplay;
+        document.getElementById('adminDateLabel').innerText = formattedDateDisplay;
         
         const docRef = doc(db, "agendamentos", dateStr);
         unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
