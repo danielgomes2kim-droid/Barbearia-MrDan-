@@ -580,7 +580,7 @@
         unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                appointmentData.ocupados = data.ocupados || [];
+                appointmentData.ocupados = Array.isArray(data.ocupados) ? data.ocupados : [];
                 appointmentData.detalhes = data.detalhes || {};
             } else {
                 appointmentData.ocupados = [];
@@ -591,6 +591,11 @@
             }
             renderTimes();
             if (isAdminAuthenticated) renderAdminPanel();
+        }, (error) => {
+            console.error("Erro ao escutar dados da nuvem:", error);
+            appointmentData.ocupados = [];
+            appointmentData.detalhes = {};
+            renderTimes();
         });
     }
 
