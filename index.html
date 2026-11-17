@@ -77,22 +77,16 @@
             text-transform: uppercase;
         }
 
-        .btn-nav-agendar {
-            background: linear-gradient(135deg, var(--gold) 0%, #aa8c2c 100%);
-            color: #000;
-            border: none;
-            padding: 8px 16px;
+        .nav-badge {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 6px 14px;
             border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            cursor: pointer;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-            transition: transform 0.2s;
-        }
-
-        .btn-nav-agendar:active {
-            transform: scale(0.95);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         /* Seção de Capa / Hero */
@@ -421,7 +415,7 @@
             <span>Desde 2018</span>
         </div>
     </div>
-    <button class="btn-nav-agendar" onclick="document.getElementById('bookingDate').showPicker();">Escolher Data</button>
+    <div class="nav-badge">VIP</div>
 </div>
 
 <!-- Capa Principal (Hero) -->
