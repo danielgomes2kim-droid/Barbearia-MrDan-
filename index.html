@@ -242,6 +242,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            user-select: none;
         }
 
         .time-slot.selected {
@@ -306,6 +307,11 @@
 
         .btn-whatsapp:hover {
             background-color: var(--gold-hover);
+        }
+
+        .btn-whatsapp:disabled {
+            opacity: 0.6;
+            cursor: wait;
         }
 
         .admin-trigger {
@@ -375,6 +381,19 @@
             color: var(--gold);
         }
 
+        .btn-clear-day {
+            width: 100%;
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
         .admin-slot {
             display: flex;
             justify-content: space-between;
@@ -426,7 +445,7 @@
     <h1>Barbearia Mr. Dan</h1>
     <p>Tradição, estilo e atendimento de alta qualidade. O visual impecável que você procura está aqui.</p>
     <div class="hero-buttons">
-        <button class="btn-hero-primary" onclick="document.getElementById('bookingDate').showPicker();">📅 Escolher Data de Agendamento</button>
+        <button type="button" class="btn-hero-primary" onclick="openDatePicker()">📅 Escolher Data de Agendamento</button>
         <div class="hero-input-container">
             <input type="text" id="clientName" placeholder="Digite seu nome aqui...">
         </div>
@@ -434,21 +453,21 @@
 </header>
 
 <div class="container">
-    <!-- Input de data escondido acionado pelos botões -->
-    <div style="display:none;">
+    <!-- Input de data -->
+    <div style="position:absolute; opacity:0; pointer-events:none; width:0; height:0;">
         <input type="date" id="bookingDate">
     </div>
 
     <div class="section-title">1. Escolha os Serviços</div>
     <div id="servicesList"></div>
 
-    <div class="section-title">3. Horários Disponíveis (<span id="selectedDateDisplay">Hoje</span>)</div>
+    <div class="section-title">2. Horários Disponíveis (<span id="selectedDateDisplay">Hoje</span>)</div>
     <div class="time-grid" id="timeGrid">
         <div class="loading-text">Carregando agenda na nuvem...</div>
     </div>
 
     <div class="admin-trigger">
-        <button onclick="toggleAdmin()">🔒 Painel de Relatórios & Gestão</button>
+        <button type="button" onclick="toggleAdmin()">🔒 Painel de Relatórios & Gestão</button>
     </div>
 
     <div class="admin-panel" id="adminPanel">
@@ -471,7 +490,8 @@
         </div>
 
         <h4>Gerenciar Horários (<span id="adminDateLabel"></span>)</h4>
-        <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Toque para bloquear/liberar ou ver detalhes:</p>
+        <button type="button" class="btn-clear-day" onclick="clearAllSlotsDay()">🗑️ Liberar Todos os Horários Deste Dia</button>
+        <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">Toque para bloquear/liberar individualmente:</p>
         <div id="adminSlotsList"></div>
     </div>
 </div>
@@ -481,7 +501,7 @@
         <span>Total Estimado</span>
         <strong id="totalPrice">R$ 0,00</strong>
     </div>
-    <button class="btn-whatsapp" onclick="sendWhatsApp()">Agendar no WhatsApp</button>
+    <button type="button" id="btnSubmitWhatsApp" class="btn-whatsapp" onclick="sendWhatsApp()">Agendar no WhatsApp</button>
 </div>
 
 <script type="module">
@@ -527,11 +547,21 @@
     let appointmentData = { ocupados: [], detalhes: {} };
     let unsubscribeSnapshot = null;
     let isAdminAuthenticated = false;
+    let isSubmitting = false;
 
     const dateInput = document.getElementById('bookingDate');
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
     dateInput.min = today;
+
+    window.openDatePicker = function() {
+        try {
+            dateInput.showPicker();
+        } catch (e) {
+            dateInput.focus();
+            dateInput.click();
+        }
+    };
 
     function renderServices() {
         const container = document.getElementById('servicesList');
@@ -614,6 +644,7 @@
     }
 
     window.selectTime = function(time) {
+        if (appointmentData.ocupados.includes(time)) return;
         selectedTime = time;
         renderTimes();
     };
@@ -665,7 +696,7 @@
                         <span><strong>${time}</strong></span>
                         ${clientInfo}
                     </div>
-                    <button class="badge-status ${isOccupied ? 'status-ocupado' : 'status-livre'}" 
+                    <button type="button" class="badge-status ${isOccupied ? 'status-ocupado' : 'status-livre'}" 
                             onclick="toggleSlotCloud('${time}')">
                         ${isOccupied ? 'OCUPADO (Liberar)' : 'LIVRE (Bloquear)'}
                     </button>
@@ -698,12 +729,30 @@
         }
     };
 
+    window.clearAllSlotsDay = async function() {
+        const dateStr = dateInput.value;
+        if (!confirm(`Tem certeza que deseja liberar TODOS os horários do dia ${dateStr.split('-').reverse().join('/')}?`)) return;
+        try {
+            await setDoc(doc(db, "agendamentos", dateStr), { 
+                ocupados: [],
+                detalhes: {}
+            });
+            alert("Todos os horários deste dia foram liberados!");
+        } catch (error) {
+            alert("Erro ao limpar horários.");
+            console.error(error);
+        }
+    };
+
     window.sendWhatsApp = async function() {
+        if (isSubmitting) return;
+
         const name = document.getElementById('clientName').value.trim();
         const dateStr = dateInput.value;
 
         if (!name) {
-            alert("Por favor, digite seu nome.");
+            alert("Por favor, digite seu nome lá em cima.");
+            document.getElementById('clientName').focus();
             return;
         }
         if (selectedServices.length === 0) {
@@ -715,18 +764,25 @@
             return;
         }
 
+        isSubmitting = true;
+        const btn = document.getElementById('btnSubmitWhatsApp');
+        btn.disabled = true;
+        btn.innerText = "Confirmando...";
+
+        const chosenTime = selectedTime;
         const totalValue = selectedServices.reduce((sum, id) => {
             const service = services.find(s => s.id === id);
             return sum + (service ? service.price : 0);
         }, 0);
 
-        const updatedOccupied = [...appointmentData.ocupados, selectedTime];
+        const updatedOccupied = Array.from(new Set([...appointmentData.ocupados, chosenTime]));
         const updatedDetails = {
             ...appointmentData.detalhes,
-            [selectedTime]: { clientName: name, totalValue: totalValue }
+            [chosenTime]: { clientName: name, totalValue: totalValue }
         };
 
         try {
+            // Salva na nuvem SOMENTE agora no clique do WhatsApp
             await setDoc(doc(db, "agendamentos", dateStr), { 
                 ocupados: updatedOccupied,
                 detalhes: updatedDetails
@@ -746,12 +802,13 @@
         const message = `Olá, *Barbearia Mr. Dan*! Gostaria de confirmar meu agendamento:\n\n` +
                         `*Cliente:* ${name}\n` +
                         `*Data:* ${formattedDate}\n` +
-                        `*Horário:* ${selectedTime}\n\n` +
+                        `*Horário:* ${chosenTime}\n\n` +
                         `*Serviços:*\n${chosenServices}\n\n` +
                         `*Total Estimado:* ${total}`;
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
+        
+        window.location.href = url;
     };
 
     dateInput.addEventListener('change', (e) => {
