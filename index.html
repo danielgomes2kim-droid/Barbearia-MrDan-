@@ -586,7 +586,7 @@
                 appointmentData.ocupados = [];
                 appointmentData.detalhes = {};
             }
-            if (appointmentData.ocupados.includes(selectedTime)) {
+            if (selectedTime && appointmentData.ocupados.includes(selectedTime)) {
                 selectedTime = null;
             }
             renderTimes();
