@@ -309,11 +309,6 @@
             background-color: var(--gold-hover);
         }
 
-        .btn-whatsapp:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
-
         .admin-trigger {
             text-align: center;
             margin-top: 40px;
@@ -547,7 +542,6 @@
     let appointmentData = { ocupados: [], detalhes: {} };
     let unsubscribeSnapshot = null;
     let isAdminAuthenticated = false;
-    let isSubmitting = false;
 
     const dateInput = document.getElementById('bookingDate');
     const today = new Date().toISOString().split('T')[0];
@@ -744,9 +738,7 @@
         }
     };
 
-    window.sendWhatsApp = async function() {
-        if (isSubmitting) return;
-
+    window.sendWhatsApp = function() {
         const name = document.getElementById('clientName').value.trim();
         const dateStr = dateInput.value;
 
@@ -764,33 +756,7 @@
             return;
         }
 
-        isSubmitting = true;
-        const btn = document.getElementById('btnSubmitWhatsApp');
-        btn.disabled = true;
-        btn.innerText = "Confirmando...";
-
         const chosenTime = selectedTime;
-        const totalValue = selectedServices.reduce((sum, id) => {
-            const service = services.find(s => s.id === id);
-            return sum + (service ? service.price : 0);
-        }, 0);
-
-        const updatedOccupied = Array.from(new Set([...appointmentData.ocupados, chosenTime]));
-        const updatedDetails = {
-            ...appointmentData.detalhes,
-            [chosenTime]: { clientName: name, totalValue: totalValue }
-        };
-
-        try {
-            // Salva na nuvem SOMENTE agora no clique do WhatsApp
-            await setDoc(doc(db, "agendamentos", dateStr), { 
-                ocupados: updatedOccupied,
-                detalhes: updatedDetails
-            }, { merge: true });
-        } catch (e) {
-            console.error(e);
-        }
-
         const formattedDate = dateStr.split('-').reverse().join('/');
         const chosenServices = selectedServices.map(id => {
             const s = services.find(item => item.id === id);
@@ -808,6 +774,7 @@
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
         
+        // Abre o WhatsApp imediatamente sem travar
         window.location.href = url;
     };
 
