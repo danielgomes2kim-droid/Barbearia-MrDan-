@@ -746,11 +746,12 @@
     };
 
     function syncToGoogleCalendar(payload) {
-        if (!GOOGLE_CALENDAR_WEBHOOK_URL) return Promise.resolve();
+        if (!GOOGLE_CALENDAR_WEBHOOK_URL) return;
 
-        return fetch(GOOGLE_CALENDAR_WEBHOOK_URL, {
+        fetch(GOOGLE_CALENDAR_WEBHOOK_URL, {
             method: "POST",
             mode: "no-cors",
+            keepalive: true,
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
         }).catch((err) => {
@@ -839,20 +840,20 @@
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
         try {
-            await setDoc(doc(db, "agendamentos", dateStr), {
+            const saveTask = setDoc(doc(db, "agendamentos", dateStr), {
                 ocupados: updatedOccupied,
                 detalhes: updatedDetails
             }, { merge: true });
+            const timeoutTask = new Promise((resolve) => setTimeout(resolve, 1200));
+            await Promise.race([saveTask, timeoutTask]);
 
-            const calendarTask = syncToGoogleCalendar({
+            syncToGoogleCalendar({
                 clientName: name,
                 dateStr: dateStr,
                 timeStr: chosenTime,
                 servicesText: chosenServices,
                 totalText: total
             });
-            const timeoutTask = new Promise((resolve) => setTimeout(resolve, 1500));
-            await Promise.race([calendarTask, timeoutTask]);
 
             window.location.href = url;
         } catch (writeErr) {
