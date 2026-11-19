@@ -309,6 +309,11 @@
             background-color: var(--gold-hover);
         }
 
+        .btn-whatsapp:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
         .admin-trigger {
             text-align: center;
             margin-top: 40px;
@@ -542,6 +547,7 @@
     let appointmentData = { ocupados: [], detalhes: {} };
     let unsubscribeSnapshot = null;
     let isAdminAuthenticated = false;
+    let isSubmitting = false;
 
     const dateInput = document.getElementById('bookingDate');
     const today = new Date().toISOString().split('T')[0];
@@ -738,7 +744,9 @@
         }
     };
 
-    window.sendWhatsApp = function() {
+    window.sendWhatsApp = async function() {
+        if (isSubmitting) return;
+
         const name = document.getElementById('clientName').value.trim();
         const dateStr = dateInput.value;
 
@@ -757,6 +765,19 @@
         }
 
         const chosenTime = selectedTime;
+
+        if (appointmentData.ocupados.includes(chosenTime)) {
+            alert("Este horário acabou de ser reservado. Escolha outro horário disponível.");
+            selectedTime = null;
+            renderTimes();
+            return;
+        }
+
+        isSubmitting = true;
+        const btn = document.getElementById('btnSubmitWhatsApp');
+        btn.disabled = true;
+        btn.innerText = "Confirmando...";
+
         const totalValue = selectedServices.reduce((sum, id) => {
             const service = services.find(s => s.id === id);
             return sum + (service ? service.price : 0);
@@ -767,14 +788,6 @@
             ...appointmentData.detalhes,
             [chosenTime]: { clientName: name, totalValue: totalValue }
         };
-
-        // Grava o bloqueio na nuvem sem travar a abertura do WhatsApp
-        setDoc(doc(db, "agendamentos", dateStr), {
-            ocupados: updatedOccupied,
-            detalhes: updatedDetails
-        }, { merge: true }).catch((e) => {
-            console.error("Erro ao salvar na nuvem:", e);
-        });
 
         const formattedDate = dateStr.split('-').reverse().join('/');
         const chosenServices = selectedServices.map(id => {
@@ -792,6 +805,17 @@
                         `*Total Estimado:* ${total}`;
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+        const savePromise = setDoc(doc(db, "agendamentos", dateStr), {
+            ocupados: updatedOccupied,
+            detalhes: updatedDetails
+        }, { merge: true }).catch((e) => {
+            console.error("Erro ao salvar na nuvem:", e);
+        });
+
+        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1500));
+        await Promise.race([savePromise, timeoutPromise]);
+
         window.location.href = url;
     };
 
