@@ -789,8 +789,11 @@
         let currentDetails = { ...appointmentData.detalhes };
 
         try {
-            const latestSnap = await getDoc(doc(db, "agendamentos", dateStr));
-            if (latestSnap.exists()) {
+            const latestSnap = await Promise.race([
+                getDoc(doc(db, "agendamentos", dateStr)),
+                new Promise((resolve) => setTimeout(() => resolve(null), 600))
+            ]);
+            if (latestSnap && latestSnap.exists()) {
                 const latestData = latestSnap.data();
                 currentOccupied = Array.isArray(latestData.ocupados) ? latestData.ocupados : [];
                 currentDetails = latestData.detalhes || {};
@@ -839,30 +842,23 @@
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
-        try {
-            const saveTask = setDoc(doc(db, "agendamentos", dateStr), {
-                ocupados: updatedOccupied,
-                detalhes: updatedDetails
-            }, { merge: true });
-            const timeoutTask = new Promise((resolve) => setTimeout(resolve, 1200));
-            await Promise.race([saveTask, timeoutTask]);
-
-            syncToGoogleCalendar({
-                clientName: name,
-                dateStr: dateStr,
-                timeStr: chosenTime,
-                servicesText: chosenServices,
-                totalText: total
-            });
-
-            window.location.href = url;
-        } catch (writeErr) {
+        const saveTask = setDoc(doc(db, "agendamentos", dateStr), {
+            ocupados: updatedOccupied,
+            detalhes: updatedDetails
+        }, { merge: true }).catch((writeErr) => {
             console.error("Erro ao salvar na nuvem:", writeErr);
-            isSubmitting = false;
-            btn.disabled = false;
-            btn.innerText = "Agendar no WhatsApp";
-            alert("Não foi possível bloquear o horário na nuvem agora. Verifique sua conexão e tente novamente.");
-        }
+        });
+
+        syncToGoogleCalendar({
+            clientName: name,
+            dateStr: dateStr,
+            timeStr: chosenTime,
+            servicesText: chosenServices,
+            totalText: total
+        });
+
+        await Promise.race([saveTask, new Promise((resolve) => setTimeout(resolve, 500))]);
+        window.location.href = url;
     };
 
     dateInput.addEventListener('change', (e) => {
