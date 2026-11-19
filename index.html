@@ -506,7 +506,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB96ZMSwaSTkPnP509aV5QRX1FEct7kHWI",
@@ -522,6 +522,7 @@
 
     const WHATSAPP_NUMBER = "5521999300686";
     const ADMIN_PASSWORD = "dan2018";
+    const GOOGLE_CALENDAR_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzCqJM_vTB8EjrS8ICb_cpSLb-6vGbmZ_2z9CqDs-D1FluzTbbkt0f7_c98sEbkFnSbQQ/exec";
 
     const services = [
         { id: 1, name: "Corte Simples", desc: "Corte tradicional", price: 25, prefix: "" },
@@ -744,6 +745,19 @@
         }
     };
 
+    function syncToGoogleCalendar(payload) {
+        if (!GOOGLE_CALENDAR_WEBHOOK_URL) return Promise.resolve();
+
+        return fetch(GOOGLE_CALENDAR_WEBHOOK_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+        }).catch((err) => {
+            console.error("Erro ao enviar para o Google Agenda:", err);
+        });
+    }
+
     window.sendWhatsApp = async function() {
         if (isSubmitting) return;
 
@@ -765,27 +779,45 @@
         }
 
         const chosenTime = selectedTime;
-
-        if (appointmentData.ocupados.includes(chosenTime)) {
-            alert("Este horário acabou de ser reservado. Escolha outro horário disponível.");
-            selectedTime = null;
-            renderTimes();
-            return;
-        }
-
         isSubmitting = true;
         const btn = document.getElementById('btnSubmitWhatsApp');
         btn.disabled = true;
         btn.innerText = "Confirmando...";
+
+        let currentOccupied = [...appointmentData.ocupados];
+        let currentDetails = { ...appointmentData.detalhes };
+
+        try {
+            const latestSnap = await getDoc(doc(db, "agendamentos", dateStr));
+            if (latestSnap.exists()) {
+                const latestData = latestSnap.data();
+                currentOccupied = Array.isArray(latestData.ocupados) ? latestData.ocupados : [];
+                currentDetails = latestData.detalhes || {};
+            }
+        } catch (readErr) {
+            console.error("Erro ao consultar disponibilidade atualizada:", readErr);
+        }
+
+        if (currentOccupied.includes(chosenTime)) {
+            isSubmitting = false;
+            btn.disabled = false;
+            btn.innerText = "Agendar no WhatsApp";
+            selectedTime = null;
+            appointmentData.ocupados = currentOccupied;
+            appointmentData.detalhes = currentDetails;
+            renderTimes();
+            alert("Este horário já foi reservado. Escolha outro horário disponível.");
+            return;
+        }
 
         const totalValue = selectedServices.reduce((sum, id) => {
             const service = services.find(s => s.id === id);
             return sum + (service ? service.price : 0);
         }, 0);
 
-        const updatedOccupied = Array.from(new Set([...appointmentData.ocupados, chosenTime]));
+        const updatedOccupied = Array.from(new Set([...currentOccupied, chosenTime]));
         const updatedDetails = {
-            ...appointmentData.detalhes,
+            ...currentDetails,
             [chosenTime]: { clientName: name, totalValue: totalValue }
         };
 
@@ -806,17 +838,30 @@
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
-        const savePromise = setDoc(doc(db, "agendamentos", dateStr), {
-            ocupados: updatedOccupied,
-            detalhes: updatedDetails
-        }, { merge: true }).catch((e) => {
-            console.error("Erro ao salvar na nuvem:", e);
-        });
+        try {
+            await setDoc(doc(db, "agendamentos", dateStr), {
+                ocupados: updatedOccupied,
+                detalhes: updatedDetails
+            }, { merge: true });
 
-        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 1500));
-        await Promise.race([savePromise, timeoutPromise]);
+            const calendarTask = syncToGoogleCalendar({
+                clientName: name,
+                dateStr: dateStr,
+                timeStr: chosenTime,
+                servicesText: chosenServices,
+                totalText: total
+            });
+            const timeoutTask = new Promise((resolve) => setTimeout(resolve, 1500));
+            await Promise.race([calendarTask, timeoutTask]);
 
-        window.location.href = url;
+            window.location.href = url;
+        } catch (writeErr) {
+            console.error("Erro ao salvar na nuvem:", writeErr);
+            isSubmitting = false;
+            btn.disabled = false;
+            btn.innerText = "Agendar no WhatsApp";
+            alert("Não foi possível bloquear o horário na nuvem agora. Verifique sua conexão e tente novamente.");
+        }
     };
 
     dateInput.addEventListener('change', (e) => {
