@@ -506,7 +506,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, onSnapshot, setDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB96ZMSwaSTkPnP509aV5QRX1FEct7kHWI",
@@ -598,6 +598,18 @@
         document.getElementById('totalPrice').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
     }
 
+    function applySlotsState(data) {
+        appointmentData.ocupados = Array.isArray(data?.ocupados) ? data.ocupados : [];
+        appointmentData.detalhes = data?.detalhes && typeof data.detalhes === 'object' ? data.detalhes : {};
+        if (selectedTime && appointmentData.ocupados.includes(selectedTime)) {
+            selectedTime = null;
+        }
+        renderTimes();
+        if (isAdminAuthenticated) {
+            renderAdminPanel();
+        }
+    }
+
     function listenToDateSlots(dateStr) {
         if (unsubscribeSnapshot) {
             unsubscribeSnapshot();
@@ -610,23 +622,13 @@
         const docRef = doc(db, "agendamentos", dateStr);
         unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
-                const data = docSnap.data();
-                appointmentData.ocupados = Array.isArray(data.ocupados) ? data.ocupados : [];
-                appointmentData.detalhes = data.detalhes || {};
+                applySlotsState(docSnap.data());
             } else {
-                appointmentData.ocupados = [];
-                appointmentData.detalhes = {};
+                applySlotsState({ ocupados: [], detalhes: {} });
             }
-            if (selectedTime && appointmentData.ocupados.includes(selectedTime)) {
-                selectedTime = null;
-            }
-            renderTimes();
-            if (isAdminAuthenticated) renderAdminPanel();
         }, (error) => {
             console.error("Erro ao escutar dados da nuvem:", error);
-            appointmentData.ocupados = [];
-            appointmentData.detalhes = {};
-            renderTimes();
+            applySlotsState({ ocupados: [], detalhes: {} });
         });
     }
 
@@ -692,7 +694,7 @@
         list.innerHTML = allTimes.map(time => {
             const isOccupied = appointmentData.ocupados.includes(time);
             const detail = appointmentData.detalhes[time];
-            const clientInfo = detail ? `<br><span style="font-size:0.75rem; color:#d4af37;">Cliente: ${detail.clientName} (R$ ${detail.totalValue.toFixed(2).replace('.', ',')})</span>` : '';
+            const clientInfo = detail ? `<br><span style="font-size:0.75rem; color:#d4af37;">Cliente: ${detail.clientName} (R$ ${Number(detail.totalValue || 0).toFixed(2).replace('.', ',')})</span>` : '';
             
             return `
                 <div class="admin-slot">
@@ -727,8 +729,9 @@
                 ocupados: updatedOccupied,
                 detalhes: updatedDetails
             }, { merge: true });
+            applySlotsState({ ocupados: updatedOccupied, detalhes: updatedDetails });
         } catch (error) {
-            alert("Erro ao atualizar na nuvem.");
+            alert("Erro ao atualizar na nuvem: " + (error?.message || error));
             console.error(error);
         }
     };
@@ -741,9 +744,10 @@
                 ocupados: [],
                 detalhes: {}
             });
+            applySlotsState({ ocupados: [], detalhes: {} });
             alert("Todos os horários deste dia foram liberados!");
         } catch (error) {
-            alert("Erro ao limpar horários.");
+            alert("Erro ao limpar horários: " + (error?.message || error));
             console.error(error);
         }
     };
@@ -800,9 +804,10 @@
         }, 0);
 
         const docRef = doc(db, "agendamentos", dateStr);
+        let finalState = null;
 
         try {
-            await runTransaction(db, async (transaction) => {
+            finalState = await runTransaction(db, async (transaction) => {
                 const snap = await transaction.get(docRef);
                 const currentOccupied = snap.exists() && Array.isArray(snap.data().ocupados)
                     ? snap.data().ocupados
@@ -825,48 +830,91 @@
                     ocupados: updatedOccupied,
                     detalhes: updatedDetails
                 }, { merge: true });
+
+                return { ocupados: updatedOccupied, detalhes: updatedDetails };
             });
-
-            const formattedDate = dateStr.split('-').reverse().join('/');
-            const chosenServices = selectedServices.map(id => {
-                const s = services.find(item => item.id === id);
-                return `• ${s.name} (${s.prefix}R$ ${s.price.toFixed(2).replace('.', ',')})`;
-            }).join('\n');
-
-            const total = document.getElementById('totalPrice').innerText;
-
-            const message = `Olá, *Barbearia Mr. Dan*! Gostaria de confirmar meu agendamento:\n\n` +
-                            `*Cliente:* ${name}\n` +
-                            `*Data:* ${formattedDate}\n` +
-                            `*Horário:* ${chosenTime}\n\n` +
-                            `*Serviços:*\n${chosenServices}\n\n` +
-                            `*Total Estimado:* ${total}`;
-
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-            syncToGoogleCalendar({
-                clientName: name,
-                dateStr: dateStr,
-                timeStr: chosenTime,
-                servicesText: chosenServices,
-                totalText: total
-            });
-
-            window.location.href = url;
-        } catch (err) {
-            isSubmitting = false;
-            btn.disabled = false;
-            btn.innerText = "Agendar no WhatsApp";
-
-            if (err && err.message === "SLOT_TAKEN") {
+        } catch (txErr) {
+            if (txErr && txErr.message === "SLOT_TAKEN") {
+                isSubmitting = false;
+                btn.disabled = false;
+                btn.innerText = "Agendar no WhatsApp";
                 selectedTime = null;
                 renderTimes();
                 alert("Este horário acabou de ser reservado por outro cliente. Escolha outro horário disponível.");
-            } else {
-                console.error("Erro ao confirmar agendamento na nuvem:", err);
-                alert("Não foi possível confirmar o horário agora. Verifique sua conexão e tente novamente.");
+                return;
+            }
+
+            try {
+                const latestSnap = await getDoc(docRef);
+                const currentOccupied = latestSnap.exists() && Array.isArray(latestSnap.data().ocupados)
+                    ? latestSnap.data().ocupados
+                    : [...appointmentData.ocupados];
+                const currentDetails = latestSnap.exists() && latestSnap.data().detalhes
+                    ? latestSnap.data().detalhes
+                    : { ...appointmentData.detalhes };
+
+                if (currentOccupied.includes(chosenTime)) {
+                    isSubmitting = false;
+                    btn.disabled = false;
+                    btn.innerText = "Agendar no WhatsApp";
+                    selectedTime = null;
+                    applySlotsState({ ocupados: currentOccupied, detalhes: currentDetails });
+                    alert("Este horário já foi reservado. Escolha outro horário disponível.");
+                    return;
+                }
+
+                const updatedOccupied = Array.from(new Set([...currentOccupied, chosenTime]));
+                const updatedDetails = {
+                    ...currentDetails,
+                    [chosenTime]: { clientName: name, totalValue: totalValue }
+                };
+
+                await setDoc(docRef, {
+                    ocupados: updatedOccupied,
+                    detalhes: updatedDetails
+                }, { merge: true });
+
+                finalState = { ocupados: updatedOccupied, detalhes: updatedDetails };
+            } catch (saveErr) {
+                isSubmitting = false;
+                btn.disabled = false;
+                btn.innerText = "Agendar no WhatsApp";
+                console.error("Erro ao confirmar agendamento na nuvem:", saveErr);
+                alert("Não foi possível bloquear o horário no banco de dados agora. Verifique sua conexão e tente novamente.");
+                return;
             }
         }
+
+        if (finalState) {
+            applySlotsState(finalState);
+        }
+
+        const formattedDate = dateStr.split('-').reverse().join('/');
+        const chosenServices = selectedServices.map(id => {
+            const s = services.find(item => item.id === id);
+            return `• ${s.name} (${s.prefix}R$ ${s.price.toFixed(2).replace('.', ',')})`;
+        }).join('\n');
+
+        const total = document.getElementById('totalPrice').innerText;
+
+        const message = `Olá, *Barbearia Mr. Dan*! Gostaria de confirmar meu agendamento:\n\n` +
+                        `*Cliente:* ${name}\n` +
+                        `*Data:* ${formattedDate}\n` +
+                        `*Horário:* ${chosenTime}\n\n` +
+                        `*Serviços:*\n${chosenServices}\n\n` +
+                        `*Total Estimado:* ${total}`;
+
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+        syncToGoogleCalendar({
+            clientName: name,
+            dateStr: dateStr,
+            timeStr: chosenTime,
+            servicesText: chosenServices,
+            totalText: total
+        });
+
+        window.location.href = url;
     };
 
     dateInput.addEventListener('change', (e) => {
