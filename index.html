@@ -757,6 +757,25 @@
         }
 
         const chosenTime = selectedTime;
+        const totalValue = selectedServices.reduce((sum, id) => {
+            const service = services.find(s => s.id === id);
+            return sum + (service ? service.price : 0);
+        }, 0);
+
+        const updatedOccupied = Array.from(new Set([...appointmentData.ocupados, chosenTime]));
+        const updatedDetails = {
+            ...appointmentData.detalhes,
+            [chosenTime]: { clientName: name, totalValue: totalValue }
+        };
+
+        // Grava o bloqueio na nuvem sem travar a abertura do WhatsApp
+        setDoc(doc(db, "agendamentos", dateStr), {
+            ocupados: updatedOccupied,
+            detalhes: updatedDetails
+        }, { merge: true }).catch((e) => {
+            console.error("Erro ao salvar na nuvem:", e);
+        });
+
         const formattedDate = dateStr.split('-').reverse().join('/');
         const chosenServices = selectedServices.map(id => {
             const s = services.find(item => item.id === id);
@@ -773,8 +792,6 @@
                         `*Total Estimado:* ${total}`;
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-        
-        // Abre o WhatsApp imediatamente sem travar
         window.location.href = url;
     };
 
