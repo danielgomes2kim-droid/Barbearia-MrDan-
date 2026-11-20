@@ -506,7 +506,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB96ZMSwaSTkPnP509aV5QRX1FEct7kHWI",
@@ -759,7 +759,7 @@
         });
     }
 
-    window.sendWhatsApp = async function() {
+    window.sendWhatsApp = function() {
         if (isSubmitting) return;
 
         const name = document.getElementById('clientName').value.trim();
@@ -783,33 +783,16 @@
         isSubmitting = true;
         const btn = document.getElementById('btnSubmitWhatsApp');
         btn.disabled = true;
-        btn.innerText = "Confirmando...";
-
-        let currentOccupied = [...appointmentData.ocupados];
-        let currentDetails = { ...appointmentData.detalhes };
-
-        try {
-            const latestSnap = await Promise.race([
-                getDoc(doc(db, "agendamentos", dateStr)),
-                new Promise((resolve) => setTimeout(() => resolve(null), 600))
-            ]);
-            if (latestSnap && latestSnap.exists()) {
-                const latestData = latestSnap.data();
-                currentOccupied = Array.isArray(latestData.ocupados) ? latestData.ocupados : [];
-                currentDetails = latestData.detalhes || {};
-            }
-        } catch (readErr) {
-            console.error("Erro ao consultar disponibilidade atualizada:", readErr);
-        }
+        btn.innerText = "Abrindo WhatsApp...";
 
         const totalValue = selectedServices.reduce((sum, id) => {
             const service = services.find(s => s.id === id);
             return sum + (service ? service.price : 0);
         }, 0);
 
-        const updatedOccupied = Array.from(new Set([...currentOccupied, chosenTime]));
+        const updatedOccupied = Array.from(new Set([...appointmentData.ocupados, chosenTime]));
         const updatedDetails = {
-            ...currentDetails,
+            ...appointmentData.detalhes,
             [chosenTime]: { clientName: name, totalValue: totalValue }
         };
 
@@ -830,7 +813,7 @@
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
-        const saveTask = setDoc(doc(db, "agendamentos", dateStr), {
+        setDoc(doc(db, "agendamentos", dateStr), {
             ocupados: updatedOccupied,
             detalhes: updatedDetails
         }, { merge: true }).catch((writeErr) => {
@@ -845,8 +828,13 @@
             totalText: total
         });
 
-        await Promise.race([saveTask, new Promise((resolve) => setTimeout(resolve, 500))]);
         window.location.href = url;
+
+        setTimeout(() => {
+            isSubmitting = false;
+            btn.disabled = false;
+            btn.innerText = "Agendar no WhatsApp";
+        }, 1500);
     };
 
     dateInput.addEventListener('change', (e) => {
