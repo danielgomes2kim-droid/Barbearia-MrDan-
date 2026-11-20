@@ -506,7 +506,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, onSnapshot, setDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB96ZMSwaSTkPnP509aV5QRX1FEct7kHWI",
@@ -598,18 +598,6 @@
         document.getElementById('totalPrice').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
     }
 
-    function applySlotsState(data) {
-        appointmentData.ocupados = Array.isArray(data?.ocupados) ? data.ocupados : [];
-        appointmentData.detalhes = data?.detalhes && typeof data.detalhes === 'object' ? data.detalhes : {};
-        if (selectedTime && appointmentData.ocupados.includes(selectedTime)) {
-            selectedTime = null;
-        }
-        renderTimes();
-        if (isAdminAuthenticated) {
-            renderAdminPanel();
-        }
-    }
-
     function listenToDateSlots(dateStr) {
         if (unsubscribeSnapshot) {
             unsubscribeSnapshot();
@@ -622,13 +610,23 @@
         const docRef = doc(db, "agendamentos", dateStr);
         unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
-                applySlotsState(docSnap.data());
+                const data = docSnap.data();
+                appointmentData.ocupados = Array.isArray(data.ocupados) ? data.ocupados : [];
+                appointmentData.detalhes = data.detalhes || {};
             } else {
-                applySlotsState({ ocupados: [], detalhes: {} });
+                appointmentData.ocupados = [];
+                appointmentData.detalhes = {};
             }
+            if (selectedTime && appointmentData.ocupados.includes(selectedTime)) {
+                selectedTime = null;
+            }
+            renderTimes();
+            if (isAdminAuthenticated) renderAdminPanel();
         }, (error) => {
             console.error("Erro ao escutar dados da nuvem:", error);
-            applySlotsState({ ocupados: [], detalhes: {} });
+            appointmentData.ocupados = [];
+            appointmentData.detalhes = {};
+            renderTimes();
         });
     }
 
@@ -647,10 +645,7 @@
     }
 
     window.selectTime = function(time) {
-        if (appointmentData.ocupados.includes(time)) {
-            alert("Este horário já está reservado. Escolha outro horário disponível.");
-            return;
-        }
+        if (appointmentData.ocupados.includes(time)) return;
         selectedTime = time;
         renderTimes();
     };
@@ -729,9 +724,8 @@
                 ocupados: updatedOccupied,
                 detalhes: updatedDetails
             }, { merge: true });
-            applySlotsState({ ocupados: updatedOccupied, detalhes: updatedDetails });
         } catch (error) {
-            alert("Erro ao atualizar na nuvem: " + (error?.message || error));
+            alert("Erro ao atualizar na nuvem.");
             console.error(error);
         }
     };
@@ -744,10 +738,9 @@
                 ocupados: [],
                 detalhes: {}
             });
-            applySlotsState({ ocupados: [], detalhes: {} });
             alert("Todos os horários deste dia foram liberados!");
         } catch (error) {
-            alert("Erro ao limpar horários: " + (error?.message || error));
+            alert("Erro ao limpar horários.");
             console.error(error);
         }
     };
@@ -785,12 +778,6 @@
             alert("Escolha um horário disponível.");
             return;
         }
-        if (appointmentData.ocupados.includes(selectedTime)) {
-            selectedTime = null;
-            renderTimes();
-            alert("Este horário já foi reservado. Escolha outro horário disponível.");
-            return;
-        }
 
         const chosenTime = selectedTime;
         isSubmitting = true;
@@ -798,96 +785,33 @@
         btn.disabled = true;
         btn.innerText = "Confirmando...";
 
+        let currentOccupied = [...appointmentData.ocupados];
+        let currentDetails = { ...appointmentData.detalhes };
+
+        try {
+            const latestSnap = await Promise.race([
+                getDoc(doc(db, "agendamentos", dateStr)),
+                new Promise((resolve) => setTimeout(() => resolve(null), 600))
+            ]);
+            if (latestSnap && latestSnap.exists()) {
+                const latestData = latestSnap.data();
+                currentOccupied = Array.isArray(latestData.ocupados) ? latestData.ocupados : [];
+                currentDetails = latestData.detalhes || {};
+            }
+        } catch (readErr) {
+            console.error("Erro ao consultar disponibilidade atualizada:", readErr);
+        }
+
         const totalValue = selectedServices.reduce((sum, id) => {
             const service = services.find(s => s.id === id);
             return sum + (service ? service.price : 0);
         }, 0);
 
-        const docRef = doc(db, "agendamentos", dateStr);
-        let finalState = null;
-
-        try {
-            finalState = await runTransaction(db, async (transaction) => {
-                const snap = await transaction.get(docRef);
-                const currentOccupied = snap.exists() && Array.isArray(snap.data().ocupados)
-                    ? snap.data().ocupados
-                    : [];
-                const currentDetails = snap.exists() && snap.data().detalhes
-                    ? snap.data().detalhes
-                    : {};
-
-                if (currentOccupied.includes(chosenTime)) {
-                    throw new Error("SLOT_TAKEN");
-                }
-
-                const updatedOccupied = Array.from(new Set([...currentOccupied, chosenTime]));
-                const updatedDetails = {
-                    ...currentDetails,
-                    [chosenTime]: { clientName: name, totalValue: totalValue }
-                };
-
-                transaction.set(docRef, {
-                    ocupados: updatedOccupied,
-                    detalhes: updatedDetails
-                }, { merge: true });
-
-                return { ocupados: updatedOccupied, detalhes: updatedDetails };
-            });
-        } catch (txErr) {
-            if (txErr && txErr.message === "SLOT_TAKEN") {
-                isSubmitting = false;
-                btn.disabled = false;
-                btn.innerText = "Agendar no WhatsApp";
-                selectedTime = null;
-                renderTimes();
-                alert("Este horário acabou de ser reservado por outro cliente. Escolha outro horário disponível.");
-                return;
-            }
-
-            try {
-                const latestSnap = await getDoc(docRef);
-                const currentOccupied = latestSnap.exists() && Array.isArray(latestSnap.data().ocupados)
-                    ? latestSnap.data().ocupados
-                    : [...appointmentData.ocupados];
-                const currentDetails = latestSnap.exists() && latestSnap.data().detalhes
-                    ? latestSnap.data().detalhes
-                    : { ...appointmentData.detalhes };
-
-                if (currentOccupied.includes(chosenTime)) {
-                    isSubmitting = false;
-                    btn.disabled = false;
-                    btn.innerText = "Agendar no WhatsApp";
-                    selectedTime = null;
-                    applySlotsState({ ocupados: currentOccupied, detalhes: currentDetails });
-                    alert("Este horário já foi reservado. Escolha outro horário disponível.");
-                    return;
-                }
-
-                const updatedOccupied = Array.from(new Set([...currentOccupied, chosenTime]));
-                const updatedDetails = {
-                    ...currentDetails,
-                    [chosenTime]: { clientName: name, totalValue: totalValue }
-                };
-
-                await setDoc(docRef, {
-                    ocupados: updatedOccupied,
-                    detalhes: updatedDetails
-                }, { merge: true });
-
-                finalState = { ocupados: updatedOccupied, detalhes: updatedDetails };
-            } catch (saveErr) {
-                isSubmitting = false;
-                btn.disabled = false;
-                btn.innerText = "Agendar no WhatsApp";
-                console.error("Erro ao confirmar agendamento na nuvem:", saveErr);
-                alert("Não foi possível bloquear o horário no banco de dados agora. Verifique sua conexão e tente novamente.");
-                return;
-            }
-        }
-
-        if (finalState) {
-            applySlotsState(finalState);
-        }
+        const updatedOccupied = Array.from(new Set([...currentOccupied, chosenTime]));
+        const updatedDetails = {
+            ...currentDetails,
+            [chosenTime]: { clientName: name, totalValue: totalValue }
+        };
 
         const formattedDate = dateStr.split('-').reverse().join('/');
         const chosenServices = selectedServices.map(id => {
@@ -906,6 +830,13 @@
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
+        const saveTask = setDoc(doc(db, "agendamentos", dateStr), {
+            ocupados: updatedOccupied,
+            detalhes: updatedDetails
+        }, { merge: true }).catch((writeErr) => {
+            console.error("Erro ao salvar na nuvem:", writeErr);
+        });
+
         syncToGoogleCalendar({
             clientName: name,
             dateStr: dateStr,
@@ -914,6 +845,7 @@
             totalText: total
         });
 
+        await Promise.race([saveTask, new Promise((resolve) => setTimeout(resolve, 500))]);
         window.location.href = url;
     };
 
