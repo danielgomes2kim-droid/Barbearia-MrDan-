@@ -92,62 +92,40 @@
         /* Seção de Capa / Hero */
         header {
             text-align: center;
-            padding: 90px 20px 30px;
+            padding: 85px 20px 25px;
             border-bottom: 1px solid var(--border-color);
             background: radial-gradient(circle at center, #181818 0%, #0c0c0c 100%);
         }
 
         .hero-logo-container img {
-            width: 160px;
-            height: 160px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             object-fit: contain;
             background-color: #1a1a1a;
             border: 3px solid var(--gold);
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.35);
-            margin-bottom: 20px;
+            margin-bottom: 14px;
             display: inline-block;
             padding: 6px;
         }
 
         header h1 {
             color: var(--gold);
-            font-size: 1.85rem;
+            font-size: 1.65rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         header p {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             max-width: 380px;
-            margin: 0 auto 20px;
+            margin: 0 auto 16px;
             line-height: 1.4;
             letter-spacing: 0.3px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 320px;
-            margin: 0 auto;
-        }
-
-        .btn-hero-primary {
-            background: linear-gradient(135deg, var(--gold) 0%, #aa8c2c 100%);
-            color: #000;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
         }
 
         .hero-input-container {
@@ -157,6 +135,8 @@
             padding: 4px 12px;
             display: flex;
             align-items: center;
+            max-width: 320px;
+            margin: 0 auto;
         }
 
         .hero-input-container input {
@@ -173,21 +153,103 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px 15px;
+            padding: 18px 15px;
+        }
+
+        /* Barra Horizontal de Etapas Clicáveis */
+        .steps-nav {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .step-btn {
+            flex: 1;
+            min-width: 74px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .step-btn .step-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .step-btn .step-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .step-btn .step-sub {
+            font-size: 0.65rem;
+            color: var(--gold);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-height: 12px;
+        }
+
+        .step-btn.active {
+            border-color: var(--gold);
+            background-color: rgba(212, 175, 55, 0.14);
+            color: var(--text-main);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        }
+
+        .step-btn.active .step-label {
+            color: var(--gold);
+        }
+
+        .step-btn.completed {
+            border-color: rgba(212, 175, 55, 0.45);
+        }
+
+        /* Painéis das Etapas */
+        .step-panel {
+            display: none;
+            animation: fadeIn 0.22s ease;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .section-title {
             color: var(--gold);
-            font-size: 1rem;
-            margin: 25px 0 12px;
+            font-size: 0.95rem;
+            margin: 0 0 12px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
         }
 
+        /* Serviços */
         .service-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -226,6 +288,77 @@
             white-space: nowrap;
         }
 
+        /* Etapa de Data */
+        .date-box-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .date-box-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+        }
+
+        .date-quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .quick-date-btn {
+            background-color: #111;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 10px;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .quick-date-btn strong {
+            font-size: 0.8rem;
+            color: var(--gold);
+        }
+
+        .quick-date-btn span {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .quick-date-btn.selected {
+            border-color: var(--gold);
+            background-color: rgba(212, 175, 55, 0.15);
+        }
+
+        .btn-calendar-trigger {
+            width: 100%;
+            background: linear-gradient(135deg, var(--gold) 0%, #aa8c2c 100%);
+            color: #000;
+            border: none;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .selected-date-banner {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Horários */
         .time-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -267,6 +400,84 @@
             font-size: 0.9rem;
         }
 
+        /* Etapa de Resumo / Confirmação */
+        .summary-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--gold);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.88rem;
+            gap: 12px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row span {
+            color: var(--text-muted);
+        }
+
+        .summary-row strong {
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        .summary-services-list {
+            text-align: right;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Botões de Navegação entre Etapas */
+        .step-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn-step-prev, .btn-step-next {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-step-prev {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .btn-step-prev:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-step-next {
+            background-color: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-step-next:hover {
+            background-color: var(--gold);
+            color: #000;
+        }
+
+        /* Barra Inferior Fixa */
         .footer-bar {
             position: fixed;
             bottom: 0;
@@ -314,9 +525,10 @@
             cursor: wait;
         }
 
+        /* Painel Admin */
         .admin-trigger {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 35px;
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
         }
@@ -444,28 +656,123 @@
     </div>
     <h1>Barbearia Mr. Dan</h1>
     <p>Tradição, estilo e atendimento de alta qualidade. O visual impecável que você procura está aqui.</p>
-    <div class="hero-buttons">
-        <button type="button" class="btn-hero-primary" onclick="openDatePicker()">📅 Escolher Data de Agendamento</button>
-        <div class="hero-input-container">
-            <input type="text" id="clientName" placeholder="Digite seu nome aqui...">
-        </div>
+    <div class="hero-input-container">
+        <input type="text" id="clientName" placeholder="Digite seu nome aqui...">
     </div>
 </header>
 
 <div class="container">
-    <!-- Input de data -->
+    <!-- Input oculto de data -->
     <div style="position:absolute; opacity:0; pointer-events:none; width:0; height:0;">
         <input type="date" id="bookingDate">
     </div>
 
-    <div class="section-title">1. Escolha os Serviços</div>
-    <div id="servicesList"></div>
+    <!-- Barra Horizontal de Etapas Clicáveis -->
+    <div class="steps-nav" role="tablist">
+        <button type="button" class="step-btn active" data-step="services" onclick="goToStep('services')">
+            <span class="step-icon">✂️</span>
+            <span class="step-label">Serviços</span>
+            <span class="step-sub" id="stepSubServices">Nenhum</span>
+        </button>
 
-    <div class="section-title">2. Horários Disponíveis (<span id="selectedDateDisplay">Hoje</span>)</div>
-    <div class="time-grid" id="timeGrid">
-        <div class="loading-text">Carregando agenda na nuvem...</div>
+        <button type="button" class="step-btn" data-step="date" onclick="goToStep('date')">
+            <span class="step-icon">📅</span>
+            <span class="step-label">Data</span>
+            <span class="step-sub" id="stepSubDate">Hoje</span>
+        </button>
+
+        <button type="button" class="step-btn" data-step="time" onclick="goToStep('time')">
+            <span class="step-icon">⏰</span>
+            <span class="step-label">Horário</span>
+            <span class="step-sub" id="stepSubTime">--:--</span>
+        </button>
+
+        <button type="button" class="step-btn" data-step="confirm" onclick="goToStep('confirm')">
+            <span class="step-icon">✅</span>
+            <span class="step-label">Resumo</span>
+            <span class="step-sub" id="stepSubConfirm">Revisar</span>
+        </button>
     </div>
 
+    <!-- ETAPA 1: SERVIÇOS -->
+    <div class="step-panel active" id="panel-services">
+        <div class="section-title">
+            <span>1. Escolha os Serviços</span>
+            <span id="selectedServicesCount" style="font-size:0.75rem; color:var(--text-muted);">0 selecionados</span>
+        </div>
+        <div id="servicesList"></div>
+        <div class="step-actions">
+            <button type="button" class="btn-step-next" onclick="goToStep('date')">Próximo: Escolher Data →</button>
+        </div>
+    </div>
+
+    <!-- ETAPA 2: DATA -->
+    <div class="step-panel" id="panel-date">
+        <div class="section-title">
+            <span>2. Escolha a Data</span>
+            <span id="selectedDateDisplay" style="font-size:0.8rem;">Hoje</span>
+        </div>
+        <div class="date-box-card">
+            <p>Selecione um atalho rápido ou abra o calendário completo:</p>
+            <div class="date-quick-grid" id="quickDatesGrid"></div>
+            <button type="button" class="btn-calendar-trigger" onclick="openDatePicker()">📅 Abrir Calendário Completo</button>
+            <div class="selected-date-banner" id="dateBannerText">Data selecionada: Hoje</div>
+        </div>
+        <div class="step-actions">
+            <button type="button" class="btn-step-prev" onclick="goToStep('services')">← Serviços</button>
+            <button type="button" class="btn-step-next" onclick="goToStep('time')">Próximo: Horário →</button>
+        </div>
+    </div>
+
+    <!-- ETAPA 3: HORÁRIO -->
+    <div class="step-panel" id="panel-time">
+        <div class="section-title">
+            <span>3. Horários Disponíveis</span>
+            <span id="selectedDateDisplayTime" style="font-size:0.8rem;">Hoje</span>
+        </div>
+        <div class="time-grid" id="timeGrid">
+            <div class="loading-text">Carregando agenda na nuvem...</div>
+        </div>
+        <div class="step-actions">
+            <button type="button" class="btn-step-prev" onclick="goToStep('date')">← Data</button>
+            <button type="button" class="btn-step-next" onclick="goToStep('confirm')">Próximo: Resumo →</button>
+        </div>
+    </div>
+
+    <!-- ETAPA 4: RESUMO & CONFIRMAÇÃO -->
+    <div class="step-panel" id="panel-confirm">
+        <div class="section-title">
+            <span>4. Resumo do Agendamento</span>
+        </div>
+        <div class="summary-card">
+            <div class="summary-row">
+                <span>Cliente</span>
+                <strong id="summaryName">Não informado</strong>
+            </div>
+            <div class="summary-row">
+                <span>Data</span>
+                <strong id="summaryDate">Hoje</strong>
+            </div>
+            <div class="summary-row">
+                <span>Horário</span>
+                <strong id="summaryTime">Não selecionado</strong>
+            </div>
+            <div class="summary-row">
+                <span>Serviços</span>
+                <div class="summary-services-list" id="summaryServices">Nenhum serviço selecionado</div>
+            </div>
+            <div class="summary-row">
+                <span>Total Estimado</span>
+                <strong id="summaryTotal" style="color: var(--gold); font-size: 1.05rem;">R$ 0,00</strong>
+            </div>
+        </div>
+        <div class="step-actions">
+            <button type="button" class="btn-step-prev" onclick="goToStep('time')">← Horário</button>
+            <button type="button" class="btn-step-next" onclick="sendWhatsApp()">Confirmar no WhatsApp</button>
+        </div>
+    </div>
+
+    <!-- Painel Administrativo -->
     <div class="admin-trigger">
         <button type="button" onclick="toggleAdmin()">🔒 Painel de Relatórios & Gestão</button>
     </div>
@@ -549,11 +856,116 @@
     let unsubscribeSnapshot = null;
     let isAdminAuthenticated = false;
     let isSubmitting = false;
+    let currentStep = 'services';
 
     const dateInput = document.getElementById('bookingDate');
-    const today = new Date().toISOString().split('T')[0];
+    const clientNameInput = document.getElementById('clientName');
+
+    function getLocalDateISO(offsetDays = 0) {
+        const d = new Date();
+        d.setDate(d.getDate() + offsetDays);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const today = getLocalDateISO(0);
     dateInput.value = today;
     dateInput.min = today;
+
+    // Navegação das Etapas Horizontais
+    window.goToStep = function(stepName) {
+        currentStep = stepName;
+
+        document.querySelectorAll('.step-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.step === stepName);
+        });
+
+        document.querySelectorAll('.step-panel').forEach(panel => {
+            panel.classList.toggle('active', panel.id === `panel-${stepName}`);
+        });
+
+        updateStepIndicators();
+    };
+
+    function updateStepIndicators() {
+        const servicesBtn = document.querySelector('.step-btn[data-step="services"]');
+        const dateBtn = document.querySelector('.step-btn[data-step="date"]');
+        const timeBtn = document.querySelector('.step-btn[data-step="time"]');
+
+        const subServices = document.getElementById('stepSubServices');
+        const subDate = document.getElementById('stepSubDate');
+        const subTime = document.getElementById('stepSubTime');
+
+        if (selectedServices.length > 0) {
+            servicesBtn.classList.add('completed');
+            subServices.innerText = `${selectedServices.length} item(ns)`;
+        } else {
+            servicesBtn.classList.remove('completed');
+            subServices.innerText = 'Nenhum';
+        }
+
+        const formattedDate = dateInput.value.split('-').reverse().join('/');
+        dateBtn.classList.add('completed');
+        subDate.innerText = dateInput.value === today ? 'Hoje' : formattedDate.slice(0, 5);
+
+        if (selectedTime) {
+            timeBtn.classList.add('completed');
+            subTime.innerText = selectedTime;
+        } else {
+            timeBtn.classList.remove('completed');
+            subTime.innerText = '--:--';
+        }
+
+        updateSummaryPanel();
+    }
+
+    function updateSummaryPanel() {
+        const name = clientNameInput.value.trim();
+        const formattedDate = dateInput.value.split('-').reverse().join('/');
+        const total = document.getElementById('totalPrice').innerText;
+
+        document.getElementById('summaryName').innerText = name || 'Não informado';
+        document.getElementById('summaryDate').innerText = dateInput.value === today ? `Hoje (${formattedDate})` : formattedDate;
+        document.getElementById('summaryTime').innerText = selectedTime || 'Não selecionado';
+        document.getElementById('summaryTotal').innerText = total;
+
+        const summaryServicesEl = document.getElementById('summaryServices');
+        if (selectedServices.length === 0) {
+            summaryServicesEl.innerHTML = '<span style="color:var(--text-muted);">Nenhum serviço selecionado</span>';
+        } else {
+            summaryServicesEl.innerHTML = selectedServices.map(id => {
+                const s = services.find(item => item.id === id);
+                return `<div>• ${s.name} (${s.prefix}R$ ${s.price.toFixed(2).replace('.', ',')})</div>`;
+            }).join('');
+        }
+    }
+
+    function renderQuickDates() {
+        const container = document.getElementById('quickDatesGrid');
+        const options = [
+            { label: 'Hoje', iso: getLocalDateISO(0) },
+            { label: 'Amanhã', iso: getLocalDateISO(1) },
+            { label: 'Depois', iso: getLocalDateISO(2) }
+        ];
+
+        container.innerHTML = options.map(opt => {
+            const shortDate = opt.iso.split('-').reverse().slice(0, 2).join('/');
+            const isSelected = dateInput.value === opt.iso;
+            return `
+                <button type="button" class="quick-date-btn ${isSelected ? 'selected' : ''}" onclick="selectQuickDate('${opt.iso}')">
+                    <strong>${opt.label}</strong>
+                    <span>${shortDate}</span>
+                </button>
+            `;
+        }).join('');
+    }
+
+    window.selectQuickDate = function(isoDate) {
+        dateInput.value = isoDate;
+        listenToDateSlots(isoDate);
+    };
 
     window.openDatePicker = function() {
         try {
@@ -578,6 +990,8 @@
                 </div>
             </div>
         `).join('');
+
+        document.getElementById('selectedServicesCount').innerText = `${selectedServices.length} selecionado(s)`;
     }
 
     window.toggleService = function(id) {
@@ -588,6 +1002,7 @@
         }
         renderServices();
         updateTotal();
+        updateStepIndicators();
     };
 
     function updateTotal() {
@@ -605,6 +1020,7 @@
             selectedTime = null;
         }
         renderTimes();
+        updateStepIndicators();
         if (isAdminAuthenticated) {
             renderAdminPanel();
         }
@@ -616,9 +1032,16 @@
         }
         selectedTime = null;
         const formattedDateDisplay = dateStr.split('-').reverse().join('/');
+        const label = dateStr === today ? `Hoje (${formattedDateDisplay})` : formattedDateDisplay;
+
         document.getElementById('selectedDateDisplay').innerText = formattedDateDisplay;
+        document.getElementById('selectedDateDisplayTime').innerText = formattedDateDisplay;
+        document.getElementById('dateBannerText').innerText = `Data selecionada: ${label}`;
         document.getElementById('adminDateLabel').innerText = formattedDateDisplay;
-        
+
+        renderQuickDates();
+        updateStepIndicators();
+
         const docRef = doc(db, "agendamentos", dateStr);
         unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
@@ -650,6 +1073,7 @@
         if (appointmentData.ocupados.includes(time)) return;
         selectedTime = time;
         renderTimes();
+        updateStepIndicators();
     };
 
     window.toggleAdmin = function() {
@@ -763,20 +1187,22 @@
     window.sendWhatsApp = function() {
         if (isSubmitting) return;
 
-        const name = document.getElementById('clientName').value.trim();
+        const name = clientNameInput.value.trim();
         const dateStr = dateInput.value;
 
         if (!name) {
             alert("Por favor, digite seu nome lá em cima.");
-            document.getElementById('clientName').focus();
+            clientNameInput.focus();
             return;
         }
         if (selectedServices.length === 0) {
             alert("Selecione pelo menos um serviço.");
+            goToStep('services');
             return;
         }
         if (!selectedTime) {
             alert("Escolha um horário disponível.");
+            goToStep('time');
             return;
         }
 
@@ -842,6 +1268,10 @@
 
     dateInput.addEventListener('change', (e) => {
         listenToDateSlots(e.target.value);
+    });
+
+    clientNameInput.addEventListener('input', () => {
+        updateSummaryPanel();
     });
 
     renderServices();
